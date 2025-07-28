@@ -7,11 +7,12 @@ import {
     JsonRpcProvider, 
     Wallet 
 } from "ethers";
-import { ABI_NAME, abis, EnvVar, getEnvVar } from "./app";
+import { EnvVar, getEnvVar } from "./app";
 import { cwd } from "process";
 import path from "path";
 import fs from "fs";
 import { SAD } from "./emoji";
+import deployedContracts from "@ara-web/cascadefund-smartcontracts/lib/deployed_contracts.json"
 
 type CategoryName = string;
 
@@ -68,6 +69,7 @@ type Withdraw = {
     resourceToken: string;
 }
 
+const networkID = getEnvVar(EnvVar.NETWORK_ID) as keyof typeof deployedContracts;
 const networkUrl = getEnvVar(EnvVar.NETWORK_URL);
 const serverPrivateKey = getEnvVar(EnvVar.SERVER_PRIVATE_KEY);
 const provider = new JsonRpcProvider(networkUrl);
@@ -75,18 +77,18 @@ const signer = new Wallet(serverPrivateKey, provider);
 
 export const serverAddress = signer.address;
 
-const hyperpaymentContract = new Contract(getEnvVar(EnvVar.HYPERPAYMENT_ADDRESS), abis[ABI_NAME.HYPERPAYMENT], signer);
-const hyperpaymentInterface = new ethers.Interface(abis[ABI_NAME.HYPERPAYMENT])
-const customerContract = new Contract(getEnvVar(EnvVar.CUSTOMER_ADDRESS), abis[ABI_NAME.CUSTOMER], signer);
-const stablecoinContract = new Contract(getEnvVar(EnvVar.STABLECOIN_ADDRESS), abis[ABI_NAME.STABLECOIN], signer);
-const businessContract = new Contract(getEnvVar(EnvVar.BUSINESS_ADDRESS), abis[ABI_NAME.BUSINESS], signer);
-const cascadeContract = new Contract(getEnvVar(EnvVar.CASCADE_ADDRESS), abis[ABI_NAME.CASCADE], signer);
+const hyperpaymentContract = new Contract(deployedContracts[networkID]["HyperpaymentV1"].address, deployedContracts[networkID]["HyperpaymentV1"].abi, signer);
+const hyperpaymentInterface = new ethers.Interface(deployedContracts[networkID]["HyperpaymentV1"].abi)
+const customerContract = new Contract(deployedContracts[networkID]["CategoryCustomer"].address, deployedContracts[networkID]["CategoryCustomer"].abi, signer);
+const stablecoinContract = new Contract(deployedContracts[networkID]["Stablecoin"].address, deployedContracts[networkID]["Stablecoin"].abi, signer);
+const businessContract = new Contract(deployedContracts[networkID]["CategoryBusiness"].address, deployedContracts[networkID]["CategoryBusiness"].abi, signer);
+const cascadeContract = new Contract(deployedContracts[networkID]["CascadeAccount"].address, deployedContracts[networkID]["CascadeAccount"].abi, signer);
 
 export async function blockchainGreeting() {
     const balance = formatEther(await provider.getBalance(signer.address));
     const network = await provider.getNetwork();
-    console.log(`I connect to ${network.name} (chainId=${network.chainId}) network.`)
-    console.log(`I have ${balance} native tokens`);
+    console.log(`I'm connecting to ${network.name} (chainId=${network.chainId}) network.`)
+    console.log(`In that network, I have ${balance} native tokens`);
 }
 
 /**
@@ -225,7 +227,7 @@ export async function calculateSampleAddress(specID: number, projectID: number, 
     const params: InitialDepositPayload = {
         counter: counter,
         amount: amount,
-        resourceToken: getEnvVar(EnvVar.STABLECOIN_ADDRESS),
+        resourceToken: deployedContracts[networkID]["Stablecoin"].address,
         resourceName: "customer",
     }
 
@@ -351,7 +353,7 @@ export async function setWithdrawer(specID: number, projectID: number, withdrawe
  *********************************************************/
 export async function getCascadeWithdrawer(purl: string): Promise<Omit<Withdraw, "resourceToken">> {
     const cascadeAccount = await cascadeContract["cascadeAccounts"](purl);
-    const balance = await cascadeContract["balanceOf"](purl, getEnvVar(EnvVar.STABLECOIN_ADDRESS));
+    const balance = await cascadeContract["balanceOf"](purl, deployedContracts[networkID]["Stablecoin"].address);
     return {
         amount: balance,
         withdrawer: cascadeAccount[5],
@@ -368,7 +370,7 @@ export async function setCascadeMaintainer(purl: string, addr: string, _username
 }
 
 export async function cascadeWithdraw(purl: string): Promise<string> {
-    const token = getEnvVar(EnvVar.STABLECOIN_ADDRESS);
+    const token = deployedContracts[networkID]["Stablecoin"].address;
     const tx: ContractTransactionResponse = await cascadeContract["withdrawAllToken"](purl, token);
 
     console.log(`Blockchain: withdrawing all tokens, tx = ${tx.hash}, confirming...`);

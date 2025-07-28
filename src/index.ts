@@ -59,15 +59,15 @@ async function main() {
     
     // create project
     const opensourceID = getOpensourceSpecId();
-    // const projectCreated = await createProject(opensourceID);
-    // console.log(`Hyperpayment: project ${projectCreated.projectID} was created.`);
+    const projectCreated = await createProject(opensourceID);
+    console.log(`Hyperpayment: project ${projectCreated.projectID} was created.`);
     // const depositInfo = await initiateCustomerDeposit(opensourceID, projectCreated.projectID);
     // console.log(`Hyperpayment: initial deposit address: ${depositInfo.depositAddress}`);
 
-    // console.log(`\n\n`)
+    console.log(`\n\n`)
     // console.log(`Hyperpayment: initiate the hyperpay by a hook`);
     // await hyperpay(opensourceID, projectCreated.projectID, depositInfo.payload);
-    const projectID = 14;
+    // const projectID = 14;
     // const info = await getWithdrawInfo(opensourceID, projectID);
     // console.log(`Hyperpayment: the open source project ${projectID} withdrawer: ${info.withdrawer}`);
     // console.log(`Hyperpayment: business user has ${formatEther(info.amount)} of ${info.resourceToken} tokens`);
@@ -84,23 +84,23 @@ async function main() {
     // const tx = await withdraw(opensourceID, projectID, parseEther("0.1"));
     // console.log(`Hyperpayment: withdrawn 0.1 ETH, tx: ${tx}`);
 
-    const purl = getFirstPurl();
-    console.log(`Hyperpayment: fetch info about ${purl}`);
-    const cascadeInfo = await getCascadeWithdrawer(purl!);
-    console.log(`The purl has ${formatEther(cascadeInfo.amount)}, withdrawer ${cascadeInfo.withdrawer}`);
-    if (cascadeInfo.withdrawer === EMPTY_ADDRESS) {
-        console.log(`Hyperpayment: set the package maintainer...`);
-        const withdrawer = "0x6c3BD0855058F143Cf48662cA5318A71b8595faB";
-        const username = "dotenv";
-        const authProvider = "github.com"
-        const tx = await setCascadeMaintainer(purl!, withdrawer, username, authProvider);
-        console.log(`Hyperpayment: cascade maintainer was set successfully: ${tx}`);
-    }
-    if (cascadeInfo.amount > 0) {
-        console.log(`Hyperpayment: withdraw all the tokens for the ${purl}`);
-        const tx = await cascadeWithdraw(purl!);
-        console.log(`Hyperpayment: withdrawing cascaded tokens succeed: ${tx}`);
-    }
+    // const purl = getFirstPurl();
+    // console.log(`Hyperpayment: fetch info about ${purl}`);
+    // const cascadeInfo = await getCascadeWithdrawer(purl!);
+    // console.log(`The purl has ${formatEther(cascadeInfo.amount)}, withdrawer ${cascadeInfo.withdrawer}`);
+    // if (cascadeInfo.withdrawer === EMPTY_ADDRESS) {
+    //     console.log(`Hyperpayment: set the package maintainer...`);
+    //     const withdrawer = "0x6c3BD0855058F143Cf48662cA5318A71b8595faB";
+    //     const username = "dotenv";
+    //     const authProvider = "github.com"
+    //     const tx = await setCascadeMaintainer(purl!, withdrawer, username, authProvider);
+    //     console.log(`Hyperpayment: cascade maintainer was set successfully: ${tx}`);
+    // }
+    // if (cascadeInfo.amount > 0) {
+    //     console.log(`Hyperpayment: withdraw all the tokens for the ${purl}`);
+    //     const tx = await cascadeWithdraw(purl!);
+    //     console.log(`Hyperpayment: withdrawing cascaded tokens succeed: ${tx}`);
+    // }
 }
 
 main().catch(error => {

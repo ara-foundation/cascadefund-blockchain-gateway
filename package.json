@@ -23,6 +23,7 @@
     "typescript": "^5.8.3"
   },
   "dependencies": {
+    "@ara-web/cascadefund-smartcontracts": "^0.0.1",
     "dotenv": "^17.2.1",
     "ethers": "^6.15.0"
   }
