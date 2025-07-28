@@ -12,7 +12,6 @@ import { cwd } from "process";
 import path from "path";
 import fs from "fs";
 import { SAD } from "./emoji";
-import { userInfo } from "os";
 
 type CategoryName = string;
 
