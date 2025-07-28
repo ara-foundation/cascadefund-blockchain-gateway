@@ -8,9 +8,6 @@ import {
     Wallet 
 } from "ethers";
 import { EnvVar, getEnvVar } from "./app";
-import { cwd } from "process";
-import path from "path";
-import fs from "fs";
 import { SAD } from "./emoji";
 import deployedContracts from "@ara-web/cascadefund-smartcontracts/lib/deployed_contracts.json"
 
@@ -30,21 +27,12 @@ type User = {
   payload: string;
 }
 
-type OpensourceUsers = {
+export type OpensourceUsers = {
     deps: string[];
     envs: string[];
     business: CategoryBusiness;
 }
 
-type PackageJSON = {
-  name: string;
-  devDependencies?: {
-    [key: string]: string
-  },
-  dependencies?: {
-    [key: string]: string
-  },
-}
 export type CreateProject = {
     txHash: string;
     specID: number;
@@ -56,16 +44,16 @@ export type InitialDeposit = {
     depositAddress: string;
 }
 
-type InitialDepositPayload = {
+export type InitialDepositParams = {
     counter: number; // such as Date.now()
-    amount: bigint; // In ether's wei
+    amount: string; // In wei format
     resourceToken: string;
     resourceName: string;
 }
 
-type Withdraw = {
+export type WithdrawerInfo = {
     withdrawer: string;
-    amount: bigint;
+    amount: string;
     resourceToken: string;
 }
 
@@ -73,14 +61,13 @@ const networkID = getEnvVar(EnvVar.NETWORK_ID) as keyof typeof deployedContracts
 const networkUrl = getEnvVar(EnvVar.NETWORK_URL);
 const serverPrivateKey = getEnvVar(EnvVar.SERVER_PRIVATE_KEY);
 const provider = new JsonRpcProvider(networkUrl);
-const signer = new Wallet(serverPrivateKey, provider);
+export const signer = new Wallet(serverPrivateKey, provider);
 
 export const serverAddress = signer.address;
 
 const hyperpaymentContract = new Contract(deployedContracts[networkID]["HyperpaymentV1"].address, deployedContracts[networkID]["HyperpaymentV1"].abi, signer);
 const hyperpaymentInterface = new ethers.Interface(deployedContracts[networkID]["HyperpaymentV1"].abi)
 const customerContract = new Contract(deployedContracts[networkID]["CategoryCustomer"].address, deployedContracts[networkID]["CategoryCustomer"].abi, signer);
-const stablecoinContract = new Contract(deployedContracts[networkID]["Stablecoin"].address, deployedContracts[networkID]["Stablecoin"].abi, signer);
 const businessContract = new Contract(deployedContracts[networkID]["CategoryBusiness"].address, deployedContracts[networkID]["CategoryBusiness"].abi, signer);
 const cascadeContract = new Contract(deployedContracts[networkID]["CascadeAccount"].address, deployedContracts[networkID]["CascadeAccount"].abi, signer);
 
@@ -119,27 +106,6 @@ function getDepPayload(purls: string[]): string {
     return encodedPayload;
 }
 
-export function getFirstPurl(): string|undefined {
-    const purls = getPurls();
-    if (purls.length === 0) {
-        return undefined;
-    }
-    return purls[0];
-}
-
-function getPurls(): string[] {
-    const url = path.join(cwd(), './package.json');
-    const packageJSON = JSON.parse(fs.readFileSync(url, { encoding: 'utf-8' })) as PackageJSON;
-    let deps: string[] = [];
-    if (packageJSON.dependencies) {
-        deps = Object.keys(packageJSON.dependencies).map(dep => `pkg:npm/${dep}@latest`);
-    }
-    if (packageJSON.devDependencies) {
-        const devDeps = Object.keys(packageJSON.devDependencies).map(dep => `pkg:npm/${dep}@latest`);
-        deps = deps.concat(...devDeps);
-    }
-    return deps;
-}
 
 /**********************************************************
  * 
@@ -162,21 +128,6 @@ export async function getProjectCounter(specID: number): Promise<number> {
  * Project Creation
  * 
  *********************************************************/
-
-export async function createSampleOpensourceProject(): Promise<CreateProject> {
-    const users: OpensourceUsers = {
-        business: {
-            purl: "pkg:git@github.com/ara-foundation/cascade-blockchain-gateway.git",
-            username: "ahmetson",
-            authProvider: "github.com",
-            withdraw: EMPTY_ADDRESS
-        },
-        envs: ["env:nodejs"],
-        deps: getPurls(),
-    }
-
-    return await createOpensourceProject(users);
-}
 
 export async function createOpensourceProject(users: OpensourceUsers): Promise<CreateProject> {
     const hashedUsers: User[] = [
@@ -216,25 +167,13 @@ async function createProject(specID: number, users: User[]): Promise<CreateProje
     return projectCreated;
 }
 
-
 /**********************************************************
  * 
  * Initiate the deposit
  * 
  *********************************************************/
 
-export async function calculateSampleAddress(specID: number, projectID: number, counter: number, amount: bigint): Promise<InitialDeposit> {
-    const params: InitialDepositPayload = {
-        counter: counter,
-        amount: amount,
-        resourceToken: deployedContracts[networkID]["Stablecoin"].address,
-        resourceName: "customer",
-    }
-
-    return await calculateAddress(specID, projectID, params);
-}
-
-export async function calculateAddress(specID: number, projectID: number, params: InitialDepositPayload): Promise<InitialDeposit> {
+export function initialDepositPayload(params: InitialDepositParams): string {
     const encodedPayload = AbiCoder.defaultAbiCoder().encode(
         [
             "uint",
@@ -248,31 +187,12 @@ export async function calculateAddress(specID: number, projectID: number, params
             params.resourceName
         ]
     );
+    return encodedPayload;
+}
 
+export async function calculateAddress(specID: number, projectID: number, encodedPayload: string): Promise<string> {
     const calculatedAddress = await customerContract["getCalculatedAddress"](specID, projectID, encodedPayload);
-    return {
-        payload: encodedPayload,
-        depositAddress: calculatedAddress as unknown as string,
-    } as InitialDeposit;
-}
-
-/**
- * @param amount in wei
- * @param depositAddress deposit address
- * @returns transaction id
- */
-export async function imitateDeposit(amount: bigint, depositAddress: string): Promise<string> {
-    const tx: ContractTransactionResponse = await stablecoinContract["transfer"](depositAddress, amount);
-    console.log(`Blockchain: imitating a customer deposit, tx = ${tx.hash}, confirming...`);
-    await tx.wait();
-    console.log(`Blockchain: customer deposit transaction was confirmed ${tx.hash}`);
-    return tx.hash;
-}
-
-export async function isInitialFundDeposited(amount: bigint, depositAddress: string): Promise<boolean> {
-    const balance: bigint|undefined = await stablecoinContract["balanceOf"](depositAddress);
-    console.log(`Blockchain: The ${depositAddress} one time deposit has ${balance} stable coins. Matches: ${balance!>=amount}`)
-    return balance! === amount;
+    return calculatedAddress as unknown as string;
 }
 
 /**********************************************************
@@ -300,16 +220,16 @@ export async function hyperpay(specID: number, projectID: number, payload: strin
  * 
  *********************************************************/
 
-export async function getWithdrawInfo(specID: number, projectID: number): Promise<Withdraw> {
+export async function getWithdrawInfo(specID: number, projectID: number): Promise<WithdrawerInfo> {
     const project = await businessContract["projects"](specID, projectID);
     return {
         resourceToken: project[0],
-        amount: project[1],
+        amount: project[1].toString(),
         withdrawer: project[2]
     }
 }
 
-export async function withdraw(specID: number, projectID: number, amount: bigint): Promise<string> {
+export async function withdraw(specID: number, projectID: number, amount: string): Promise<string> {
     const info = await getWithdrawInfo(specID, projectID);
     if (info.withdrawer === EMPTY_ADDRESS) {    
         throw `server has no withdraw token, checking can server withdraw on behalf of the user?`;
@@ -323,11 +243,37 @@ export async function withdraw(specID: number, projectID: number, amount: bigint
         console.log(`Server has withdraw role`)
     }
 
-    if (amount > info.amount) {
-        throw `User has -${formatEther(amount-info.amount)} coins than asked for withdraw. Please pass correct argument to this function`;
+    if (BigInt(amount) > BigInt(info.amount)) {
+        throw `User has -${formatEther(BigInt(amount)-BigInt(info.amount))} coins than asked for withdraw. Please pass correct argument to this function`;
     }
 
     const tx: ContractTransactionResponse = await businessContract["withdraw"](specID, projectID, amount);
+
+    console.log(`Blockchain: withdrawing a token, tx = ${tx.hash}, confirming...`);
+    await tx.wait();
+    console.log(`Blockchain: withdrawing was confirmed ${tx.hash}`);
+    return tx.hash;
+}
+
+export async function withdrawAll(specID: number, projectID: number): Promise<string> {
+    const info = await getWithdrawInfo(specID, projectID);
+    if (info.withdrawer === EMPTY_ADDRESS) {    
+        throw `server has no withdraw token, checking can server withdraw on behalf of the user?`;
+    }
+        
+    const withdrawRole = "0xa8a7bc421f721cb936ea99efdad79237e6ee0b871a2a08cf648691f9584cdc77";
+    const serverCanWithdraw: boolean = await businessContract["hasRole"](withdrawRole, serverAddress);
+    if (!serverCanWithdraw) {
+        throw `Server has no withdraw role, it can not withdraw tokens on behalf of the user. Consider using cascade withdrawer`;
+    } else {
+        console.log(`Server has withdraw role`)
+    }
+
+    if (BigInt(info.amount) <= 0) {
+        throw `User has no coins for withdraw. Please pass correct argument to this function`;
+    }
+
+    const tx: ContractTransactionResponse = await businessContract["withdrawAll"](specID, projectID);
 
     console.log(`Blockchain: withdrawing a token, tx = ${tx.hash}, confirming...`);
     await tx.wait();
@@ -351,11 +297,11 @@ export async function setWithdrawer(specID: number, projectID: number, withdrawe
  * - set withdrawer
  * 
  *********************************************************/
-export async function getCascadeWithdrawer(purl: string): Promise<Omit<Withdraw, "resourceToken">> {
+export async function getCascadeWithdrawer(purl: string): Promise<Omit<WithdrawerInfo, "resourceToken">> {
     const cascadeAccount = await cascadeContract["cascadeAccounts"](purl);
     const balance = await cascadeContract["balanceOf"](purl, deployedContracts[networkID]["Stablecoin"].address);
     return {
-        amount: balance,
+        amount: balance.toString(),
         withdrawer: cascadeAccount[5],
     }
 }

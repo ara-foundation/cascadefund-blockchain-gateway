@@ -2,6 +2,7 @@ import { SAD } from "./emoji";
 const nodeEnv = process.env.NODE_ENV || "development";
 
 export enum EnvVar {
+    PORT = "PORT",
     NETWORK_ID = "NETWORK_ID",
     NETWORK_URL = "NETWORK_URL",
     SERVER_PRIVATE_KEY = "SERVER_PRIVATE_KEY",
@@ -9,6 +10,7 @@ export enum EnvVar {
 }
 
 const envDescriptions: { [K in EnvVar]?: string } = {
+    PORT: "port where it will expose reply worker",
     NETWORK_ID: "chain id",
     NETWORK_URL: `blockchain rpc`,
     SERVER_PRIVATE_KEY: "private key with server role to hyperpayment smartcontracts",

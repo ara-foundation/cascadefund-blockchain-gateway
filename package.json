@@ -4,7 +4,19 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "NODE_ENV=development ts-node src/index.ts"
+    "dev": "NODE_ENV=development ts-node src/index.ts",
+    "dev-server": "NODE_ENV=development ts-node src/server.ts",
+    
+    "hello-server": "ts-node scripts/hello.ts",
+    "create-project": "ts-node scripts/create-project.ts",
+    "initiate-deposit": " ts-node scripts/initiate-deposit.ts",
+    "hyperpay": " ts-node scripts/hyperpay.ts",
+    "set-withdrawer": " ts-node scripts/set-withdrawer.ts",
+    "withdrawer-info": " ts-node scripts/get-withdrawer.ts",
+    "withdraw": " ts-node scripts/withdraw.ts",
+    "cascade-info": " ts-node scripts/cascade-info.ts",
+    "set-cascade-withdrawer": " ts-node scripts/set-cascade-withdrawer.ts",
+    "cascade-withdraw": " ts-node scripts/cascade-withdraw.ts"
   },
   "repository": {
     "type": "git",
@@ -25,6 +37,7 @@
   "dependencies": {
     "@ara-web/cascadefund-smartcontracts": "^0.0.1",
     "dotenv": "^17.2.1",
-    "ethers": "^6.15.0"
+    "ethers": "^6.15.0",
+    "zeromq": "^6.5.0"
   }
 }
