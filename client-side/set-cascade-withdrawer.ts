@@ -1,7 +1,7 @@
 import "dotenv/config";
-import { ReplyTx, RequestSetCascadeWithdrawer } from "../src/server.types";
+import { ReplyTx, RequestSetCascadeWithdrawer } from "../server-side/server.types";
 import { send } from "./client";
-import { SMILEY } from "../src/emoji";
+import { SMILEY } from "../server-side/emoji";
 import { getFirstPurl } from "./pkg";
 
 async function run() {
@@ -10,7 +10,7 @@ async function run() {
 
     const json: RequestSetCascadeWithdrawer = {
         cmd: "setCascadeWithdrawer",
-        params: {withdrawer, purl, username: "ahmetson", authProvider: "github.com"}
+        params: { withdrawer, purl, username: "ahmetson", authProvider: "github.com" }
     }
 
     console.log(`Set cascade maintainer for ${purl} project...`);

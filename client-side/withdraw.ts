@@ -1,7 +1,7 @@
 import "dotenv/config";
-import { ReplyTx, RequestWithdraw } from "../src/server.types";
+import { ReplyTx, RequestWithdraw } from "../server-side/server.types";
 import { send } from "./client";
-import { SMILEY } from "../src/emoji";
+import { SMILEY } from "../server-side/emoji";
 import { parseEther } from "ethers";
 
 async function run() {
@@ -11,7 +11,7 @@ async function run() {
 
     const json: RequestWithdraw = {
         cmd: "withdraw",
-        params: {specID, projectID, amount: amount.toString(), all: false}
+        params: { specID, projectID, amount: amount.toString(), all: false }
     }
 
     console.log(`Withdraw ${amount} of tokens for ${projectID} project following ${specID} specification...`);

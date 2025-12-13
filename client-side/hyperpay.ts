@@ -1,10 +1,10 @@
 import "dotenv/config";
-import { InitialDepositParams } from "../src/blockchain";
-import { ReplyTx, RequestHyperpay } from "../src/server.types";
+import { InitialDepositParams } from "../server-side/blockchain";
+import { ReplyTx, RequestHyperpay } from "../server-side/server.types";
 import { send } from "./client";
 import { parseEther } from "ethers";
 import deployedContracts from "@ara-web/cascadefund-smartcontracts/lib/deployed_contracts.json"
-import { EnvVar, getEnvVar } from "../src/app";
+import { EnvVar, getEnvVar } from "../server-side/app";
 
 const networkID = getEnvVar(EnvVar.NETWORK_ID) as keyof typeof deployedContracts;
 

@@ -1,14 +1,14 @@
 import "dotenv/config";
-import { ReplyTx, RequestCascadeWithdraw } from "../src/server.types";
+import { ReplyTx, RequestCascadeWithdraw } from "../server-side/server.types";
 import { send } from "./client";
-import { SMILEY } from "../src/emoji";
+import { SMILEY } from "../server-side/emoji";
 import { getFirstPurl } from "./pkg";
 
 async function run() {
     const purl = getFirstPurl()!;
     const json: RequestCascadeWithdraw = {
         cmd: "cascadeWithdraw",
-        params: {purl}
+        params: { purl }
     }
 
     console.log(`Cascade Withdraw for ${purl} package...`);

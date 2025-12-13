@@ -1,7 +1,7 @@
 import "dotenv/config";
-import { ReplyWithdrawerInfo, RequestWithdrawerInfo } from "../src/server.types";
+import { ReplyWithdrawerInfo, RequestWithdrawerInfo } from "../server-side/server.types";
 import { send } from "./client";
-import { SMILEY } from "../src/emoji";
+import { SMILEY } from "../server-side/emoji";
 
 async function run() {
     const specID = 1;
@@ -9,7 +9,7 @@ async function run() {
 
     const json: RequestWithdrawerInfo = {
         cmd: "withdrawerInfo",
-        params: {specID, projectID}
+        params: { specID, projectID }
     }
 
     console.log(`Return withdrawer and his balance info in ${projectID} project following ${specID} specification...`);

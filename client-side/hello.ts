@@ -1,4 +1,4 @@
-import { type RequestHello } from "../src/server.types";
+import { type RequestHello } from "../server-side/server.types";
 import { send } from "./client";
 
 async function run() {

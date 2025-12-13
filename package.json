@@ -4,7 +4,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "NODE_ENV=development ts-node src/server.ts",
+    "dev": "NODE_ENV=development ts-node server-side/server.ts",
     "hello-server": "ts-node client-side/hello.ts",
     "create-project": "ts-node client-side/create-project.ts",
     "set-withdrawer": " ts-node client-side/set-withdrawer.ts",
@@ -16,14 +16,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ara-foundation/cascadefund-blockchain-gateway.git"
+    "url": "git+https://github.com/ara-foundation/blockchain-gateway.git"
   },
   "author": "Medet Ahmetson",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/ara-foundation/cascadefund-blockchain-gateway/issues"
+    "url": "https://github.com/ara-foundation/blockchain-gateway/issues"
   },
-  "homepage": "https://github.com/ara-foundation/cascadefund-blockchain-gateway#readme",
+  "homepage": "https://github.com/ara-foundation/blockchain-gateway#readme",
   "description": "",
   "devDependencies": {
     "@types/node": "^24.1.0",
@@ -32,6 +32,7 @@
   },
   "dependencies": {
     "@ara-web/cascadefund-smartcontracts": "^0.0.1",
+    "@ara-web/smartcontracts": "^1.0.0",
     "dotenv": "^17.2.1",
     "ethers": "^6.15.0",
     "zeromq": "^6.5.0"

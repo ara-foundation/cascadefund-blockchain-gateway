@@ -1,7 +1,7 @@
 import "dotenv/config";
-import { ReplyCascadeInfo, RequestCascadeInfo } from "../src/server.types";
+import { ReplyCascadeInfo, RequestCascadeInfo } from "../server-side/server.types";
 import { send } from "./client";
-import { SMILEY } from "../src/emoji";
+import { SMILEY } from "../server-side/emoji";
 import { getFirstPurl } from "./pkg";
 
 async function run() {
@@ -9,7 +9,7 @@ async function run() {
 
     const json: RequestCascadeInfo = {
         cmd: "cascadeInfo",
-        params: {purl: purl!}
+        params: { purl: purl! }
     }
 
     console.log(`Cascade info for ${purl} package...`);

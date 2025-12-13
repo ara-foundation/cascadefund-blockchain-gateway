@@ -1,6 +1,6 @@
 import "dotenv/config";
-import { OpensourceUsers, EMPTY_ADDRESS } from "../src/blockchain";
-import { ReplyProjectCreation, type RequestProjectCreation } from "../src/server.types";
+import { OpensourceUsers, EMPTY_ADDRESS } from "../server-side/blockchain";
+import { ReplyProjectCreation, type RequestProjectCreation } from "../server-side/server.types";
 import { send } from "./client";
 import { getPurls } from "./pkg";
 
