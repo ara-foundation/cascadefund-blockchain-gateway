@@ -9,13 +9,11 @@ import { SMILEY } from "../src/emoji";
 
 const networkID = getEnvVar(EnvVar.NETWORK_ID) as keyof typeof deployedContracts;
 
-async function run() {
-    const specID = 1;
-    const projectID = 2;
-    const rawAmount = "1.5";
-    const counter = 1753694965791;
-    const amount = parseEther(rawAmount);
-    
+const specID = 1;
+const projectID = 2;
+const rawAmount = "50";
+
+export async function hyperpay(counter: number = Date.now(), amount: bigint = parseEther(rawAmount)): Promise<string> {
     const params: InitialDepositParams = {
         counter: counter,
         amount: amount.toString(),
@@ -25,15 +23,11 @@ async function run() {
 
     const json: RequestHyperpay = {
         cmd: "hyperpay",
-        params: {...params, specID, projectID}
+        params: { ...params, specID, projectID }
     }
 
-    console.log(`Hyperpay by nonce '${counter}' to receive ${rawAmount} tokens...`);
+    console.log(`Hyperpay a deposit by nonce '${counter}' to receive ${rawAmount} tokens...`);
     const reply = await send(json) as ReplyTx;
     console.log(`${SMILEY} Hyperpayment tx confirmed: ${reply.params.tx}`);
+    return reply.params.tx;
 }
-
-run().catch(e => {
-    console.error(e);
-    process.exitCode = 1;
-})

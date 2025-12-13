@@ -3,7 +3,7 @@ import dotenv from "dotenv";
 import { EnvVar, getEnvVar, isDev } from "./app";
 
 if (isDev()) {
-    dotenv.config({quiet: true, debug: false});
+    dotenv.config({ quiet: true, debug: false });
 }
 
 import { ReplyCascadeInfo, ReplyDepositInitiation, ReplyError, ReplyOk, ReplyProjectCreation, ReplyTx, ReplyWithdrawerInfo, Request } from "./server.types";
@@ -14,13 +14,15 @@ import { calculateAddress, cascadeWithdraw, createOpensourceProject, getCascadeW
 async function run() {
     const sock = new zmq.Reply();
 
-    await sock.bind(`tcp://127.0.0.1:${getEnvVar(EnvVar.PORT)}`);
+    await sock.bind(`tcp://0.0.0.0:${getEnvVar(EnvVar.PORT)}`);
+    console.log(`${SMILEY} Payment gateway server is running on port 0.0.0.0:${getEnvVar(EnvVar.PORT)}`);
 
     for await (const [msg] of sock) {
         let request: Request;
         try {
             request = JSON.parse(msg.toString()) as Request;
         } catch (e: any) {
+            console.error(`${SMILEY} Error parsing request: ${e.toString()}`);
             const reply: ReplyError = {
                 error: e.toString(),
                 time: Date.now(),
@@ -28,6 +30,8 @@ async function run() {
             await sock.send(JSON.stringify(reply));
             continue;
         }
+
+        console.log(`${SMILEY} Received request: ${request.cmd}`);
 
         if (request.cmd === "hello") {
             console.log(`${SMILEY} Hello, how are you doing?`);
