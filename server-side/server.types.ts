@@ -1,4 +1,4 @@
-import { CreateProject, InitialDeposit, InitialDepositParams, OpensourceUsers, WithdrawerInfo } from "./blockchain"
+import { CreateProject, InitialDeposit, InitialDepositParams, OpensourceUsers, WithdrawerInfo } from "./cascadefund-smartcontracts"
 
 export type RequestProjectCreation = {
     cmd: "createProject",
@@ -91,21 +91,21 @@ export type ReplyProjectCreation = {
 export type ReplyDepositInitiation = ReplyOk & {
     params: InitialDeposit
 };
-export type Reply = 
-    ReplyOk | 
-    ReplyError | 
+export type Reply =
+    ReplyOk |
+    ReplyError |
     ReplyProjectCreation |
     ReplyDepositInitiation |
-    ReplyTx | 
+    ReplyTx |
     ReplyWithdrawerInfo |
     ReplyCascadeInfo;
-export type Request = 
-    RequestHello | 
+export type Request =
+    RequestHello |
     RequestProjectCreation |
-    RequestDepositInitiation | 
-    RequestHyperpay | 
+    RequestDepositInitiation |
+    RequestHyperpay |
     RequestSetWithdrawer |
-    RequestWithdrawerInfo | 
+    RequestWithdrawerInfo |
     RequestWithdraw |
     RequestCascadeInfo |
     RequestSetCascadeWithdrawer |

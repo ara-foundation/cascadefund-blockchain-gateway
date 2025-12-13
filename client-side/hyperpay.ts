@@ -1,5 +1,5 @@
 import "dotenv/config";
-import { InitialDepositParams } from "../server-side/blockchain";
+import { InitialDepositParams } from "../server-side/cascadefund-smartcontracts";
 import { ReplyTx, RequestHyperpay } from "../server-side/server.types";
 import { send } from "./client";
 import { parseEther } from "ethers";

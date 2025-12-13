@@ -1,5 +1,5 @@
 import "dotenv/config";
-import { InitialDepositParams, signer } from "../server-side/blockchain";
+import { InitialDepositParams, signer } from "../server-side/cascadefund-smartcontracts";
 import { ReplyDepositInitiation, RequestDepositInitiation } from "../server-side/server.types";
 import { send } from "./client";
 import { Contract, ContractTransactionResponse, parseEther } from "ethers";
