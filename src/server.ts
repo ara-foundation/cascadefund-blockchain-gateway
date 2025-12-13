@@ -31,8 +31,6 @@ async function run() {
             continue;
         }
 
-        console.log(`${SMILEY} Received request: ${request.cmd}`);
-
         if (request.cmd === "hello") {
             console.log(`${SMILEY} Hello, how are you doing?`);
         } else if (request.cmd === "createProject") {

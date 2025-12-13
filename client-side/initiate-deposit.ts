@@ -26,16 +26,13 @@ export async function imitate50Deposit(counter: number = Date.now(), amount: big
         params: { ...params, specID, projectID }
     }
 
-    console.log(`Initiate a deposit by nonce '${counter}' to receive ${rawAmount} tokens...`);
     const reply = await send(json) as ReplyDepositInitiation;
-    console.log(`Deposit user tokens to the following address: ${reply.params.depositAddress}`);
 
     const txHash = await imitateDeposit(amount, reply.params.depositAddress);
 
     let checkCounter = 1;
     do {
         const deposited = await isInitialFundDeposited(amount, reply.params.depositAddress);
-        console.log(`Hyperpayment: check deposited tokens arrived? ${deposited}`)
         if (deposited) {
             break;
         }
@@ -53,7 +50,6 @@ export async function imitate50Deposit(counter: number = Date.now(), amount: big
 
 async function isInitialFundDeposited(amount: bigint, depositAddress: string): Promise<boolean> {
     const balance: bigint | undefined = await stablecoinContract["balanceOf"](depositAddress);
-    console.log(`Blockchain: The ${depositAddress} one time deposit has ${balance} stable coins. Matches: ${balance! >= amount}`)
     return balance! === amount;
 }
 
@@ -64,8 +60,6 @@ async function isInitialFundDeposited(amount: bigint, depositAddress: string): P
  */
 async function imitateDeposit(amount: bigint, depositAddress: string): Promise<string> {
     const tx: ContractTransactionResponse = await stablecoinContract["transfer"](depositAddress, amount);
-    console.log(`Blockchain: imitating a customer deposit, tx = ${tx.hash}, confirming...`);
     await tx.wait();
-    console.log(`Blockchain: customer deposit transaction was confirmed ${tx.hash}`);
     return tx.hash;
 }

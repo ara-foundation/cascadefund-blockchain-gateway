@@ -5,7 +5,6 @@ import { send } from "./client";
 import { parseEther } from "ethers";
 import deployedContracts from "@ara-web/cascadefund-smartcontracts/lib/deployed_contracts.json"
 import { EnvVar, getEnvVar } from "../src/app";
-import { SMILEY } from "../src/emoji";
 
 const networkID = getEnvVar(EnvVar.NETWORK_ID) as keyof typeof deployedContracts;
 
@@ -26,8 +25,6 @@ export async function hyperpay(counter: number = Date.now(), amount: bigint = pa
         params: { ...params, specID, projectID }
     }
 
-    console.log(`Hyperpay a deposit by nonce '${counter}' to receive ${rawAmount} tokens...`);
     const reply = await send(json) as ReplyTx;
-    console.log(`${SMILEY} Hyperpayment tx confirmed: ${reply.params.tx}`);
     return reply.params.tx;
 }
