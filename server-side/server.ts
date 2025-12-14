@@ -9,6 +9,7 @@ if (isDev()) {
 import { ReplyError, ReplyOk, Request } from "./server.types";
 import { SMILEY } from "./emoji";
 import { isCascadefundPaymentReq, cascadeFundRep } from "./cascadefund-payment";
+import { isAraAllStarsReq, araAllStarsRep } from "./ara-all-stars";
 
 
 async function run() {
@@ -40,6 +41,10 @@ async function run() {
             continue;
         } else if (isCascadefundPaymentReq(request.cmd)) {
             const reply = await cascadeFundRep(request);
+            await sock.send(JSON.stringify(reply));
+            continue;
+        } else if (isAraAllStarsReq(request.cmd)) {
+            const reply = await araAllStarsRep(request);
             await sock.send(JSON.stringify(reply));
             continue;
         } else {

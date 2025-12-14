@@ -1,4 +1,5 @@
 import { CreateProject, InitialDeposit, InitialDepositParams, OpensourceUsers, WithdrawerInfo } from "./cascadefund-smartcontracts"
+import { GalaxyInfo, GalaxyResult, SerializedGalaxy, SerializedPosition, SerializedSolarForge, SolarForgeResult } from "./ara-smartcontracts"
 
 export type RequestProjectCreation = {
     cmd: "createProject",
@@ -66,6 +67,34 @@ export type RequestCascadeWithdraw = {
     }
 }
 
+export type RequestAddGalaxy = {
+    cmd: "addGalaxy",
+    params: SerializedGalaxy
+}
+
+export type RequestGetGalaxy = {
+    cmd: "getGalaxy",
+    params: {
+        galaxyId: number
+    }
+}
+
+export type RequestSolarForge = {
+    cmd: "solarForge",
+    params: {
+        galaxyId: number,
+        models: SerializedSolarForge[]
+    }
+}
+
+export type RequestSpaceCoord = {
+    cmd: "spaceCoord",
+    params: {
+        galaxyId: number,
+        position: SerializedPosition
+    }
+}
+
 export type ReplyError = {
     error: string,
     time: number,
@@ -78,6 +107,17 @@ export type ReplyWithdrawerInfo = ReplyOk & {
 }
 export type ReplyCascadeInfo = ReplyOk & {
     params: Omit<WithdrawerInfo, "resourceToken">
+}
+export type ReplyGalaxyCreation = {
+    time: number,
+    params: GalaxyResult
+}
+export type ReplyGalaxyInfo = ReplyOk & {
+    params: GalaxyInfo
+}
+export type ReplySolarForge = {
+    time: number,
+    params: SolarForgeResult
 }
 export type ReplyTx = ReplyOk & {
     params: {
@@ -98,7 +138,10 @@ export type Reply =
     ReplyDepositInitiation |
     ReplyTx |
     ReplyWithdrawerInfo |
-    ReplyCascadeInfo;
+    ReplyCascadeInfo |
+    ReplyGalaxyCreation |
+    ReplyGalaxyInfo |
+    ReplySolarForge;
 export type Request =
     RequestHello |
     RequestProjectCreation |
@@ -109,4 +152,8 @@ export type Request =
     RequestWithdraw |
     RequestCascadeInfo |
     RequestSetCascadeWithdrawer |
-    RequestCascadeWithdraw;
+    RequestCascadeWithdraw |
+    RequestAddGalaxy |
+    RequestGetGalaxy |
+    RequestSolarForge |
+    RequestSpaceCoord;
