@@ -6,10 +6,12 @@ import {
 } from "ethers";
 import { EnvVar, getEnvVar } from "./app";
 import { SAD } from "./emoji";
-import { allStarsAbi, allStarsAddress } from "@ara-web/smartcontracts";
 import { SerializedGalaxy, SerializedPosition, SerializedSolarForge, GalaxyResult, GalaxyInfo, SolarForgeResult } from "./server.types";
 
-const networkID = parseInt(getEnvVar(EnvVar.NETWORK_ID)) as keyof typeof allStarsAddress;
+// Import smartcontracts - tsx handles ESM imports properly
+import { allStarsAbi, allStarsAddress } from "@ara-web/smartcontracts";
+
+const networkID = parseInt(getEnvVar(EnvVar.NETWORK_ID)) as unknown as keyof typeof allStarsAddress;
 const networkUrl = getEnvVar(EnvVar.NETWORK_URL);
 const serverPrivateKey = getEnvVar(EnvVar.SERVER_PRIVATE_KEY);
 
@@ -18,10 +20,11 @@ const provider = new JsonRpcProvider(networkUrl);
 const signer = new Wallet(serverPrivateKey, provider);
 export const serverAddress = signer.address;
 
+
 // Setup contracts
 const allStarsContractAddress = allStarsAddress[networkID];
 if (!allStarsContractAddress) {
-    throw new Error(`${SAD} Network ID ${networkID} is not supported. Available networks: ${Object.keys(allStarsAddress).join(', ')}`);
+    throw new Error(`${SAD} Network ID ${String(networkID)} is not supported. Available networks: ${Object.keys(allStarsAddress).join(', ')}`);
 }
 const allStarsContract = new Contract(allStarsContractAddress, allStarsAbi, signer);
 
@@ -30,7 +33,9 @@ const allStarsContract = new Contract(allStarsContractAddress, allStarsAbi, sign
  */
 function convertSolarForgeToBlockchain(solarForge: SerializedSolarForge): any {
     // Convert stars to wei format (1 ether = 10^18 wei)
-    const starsInWei = BigInt(solarForge.stars) * BigInt(10 ** 18);
+    // Handle decimal numbers by multiplying first, then converting to BigInt
+    const starsValue = typeof solarForge.stars === 'number' ? solarForge.stars : parseFloat(String(solarForge.stars));
+    const starsInWei = BigInt(Math.floor(starsValue * 10 ** 18));
     return {
         _id: solarForge._id,
         solarForgeType: solarForge.solarForgeType,

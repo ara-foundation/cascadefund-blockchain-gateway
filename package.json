@@ -4,7 +4,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "NODE_ENV=development ts-node server-side/server.ts",
+    "dev": "NODE_ENV=development tsx server-side/server.ts",
     "hello-server": "ts-node client-side/hello.ts",
     "create-project": "ts-node client-side/create-project.ts",
     "set-withdrawer": " ts-node client-side/set-withdrawer.ts",
@@ -28,11 +28,12 @@
   "devDependencies": {
     "@types/node": "^24.1.0",
     "ts-node": "^10.9.2",
+    "tsx": "^4.21.0",
     "typescript": "^5.8.3"
   },
   "dependencies": {
     "@ara-web/cascadefund-smartcontracts": "^0.0.1",
-    "@ara-web/smartcontracts": "^1.0.0",
+    "@ara-web/smartcontracts": "^1.0.1",
     "dotenv": "^17.2.1",
     "ethers": "^6.15.0",
     "zeromq": "^6.5.0"
