@@ -7,56 +7,7 @@ import {
 import { EnvVar, getEnvVar } from "./app";
 import { SAD } from "./emoji";
 import { allStarsAbi, allStarsAddress } from "@ara-web/smartcontracts";
-
-// Generic serialized types (as received from MongoDB/TypeScript)
-// Matches addGalaxy function signature: address owner_, string repoUrl_, string issuesUrl_, string name_, uint256 id_, uint256 minX, uint256 maxX, uint256 minY, uint256 maxY
-export type SerializedGalaxy = {
-    owner: string; // address
-    repoUrl: string;
-    issuesUrl: string;
-    name: string;
-    id: number; // uint256
-    minX: number; // uint256
-    maxX: number; // uint256
-    minY: number; // uint256
-    maxY: number; // uint256
-}
-
-// Matches spaceCoord function signature: uint256 galaxyId, address userId, uint256 x, uint256 y
-export type SerializedPosition = {
-    userId: string; // address
-    x: number; // uint256
-    y: number; // uint256
-}
-
-// Matches SolarForge struct: string _id, string solarForgeType, string issueId, address[] users, uint256 stars
-export type SerializedSolarForge = {
-    _id: string;
-    solarForgeType: string;
-    issueId: string;
-    users: string[]; // address[]
-    stars: number; // uint256
-}
-
-export type GalaxyResult = {
-    txHash: string;
-    galaxyId: string;
-}
-
-export type GalaxyInfo = {
-    galaxyId: string;
-    maintainer: string;
-    name: string;
-    stars: number;
-    sunshines: number;
-    x: number;
-    y: number;
-}
-
-export type SolarForgeResult = {
-    txHash: string;
-    solarForgeId: string;
-}
+import { SerializedGalaxy, SerializedPosition, SerializedSolarForge, GalaxyResult, GalaxyInfo, SolarForgeResult } from "./server.types";
 
 const networkID = parseInt(getEnvVar(EnvVar.NETWORK_ID)) as keyof typeof allStarsAddress;
 const networkUrl = getEnvVar(EnvVar.NETWORK_URL);
