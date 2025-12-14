@@ -1,4 +1,4 @@
-# Cascadefund Blockchain Gateway
+# Crypto sockets
 A package that connects to the blockchain and interacts with the 
 smartcontracts. It's build on the [Zeromq](https://zeromq.org/) network library
 and provides two sockets to interact with.

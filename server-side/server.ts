@@ -16,14 +16,14 @@ async function run() {
     const sock = new zmq.Reply();
 
     await sock.bind(`tcp://0.0.0.0:${getEnvVar(EnvVar.PORT)}`);
-    console.log(`${SMILEY} Payment gateway server is running on port 0.0.0.0:${getEnvVar(EnvVar.PORT)}`);
+    console.log(`${SMILEY} Blockchain Gateway runs on port 0.0.0.0:${getEnvVar(EnvVar.PORT)}`);
 
     for await (const [msg] of sock) {
         let request: Request;
         try {
-            request = JSON.parse(msg.toString()) as Request;
+            const msgStr = msg.toString();
+            request = JSON.parse(msgStr) as Request;
         } catch (e: any) {
-            console.error(`${SMILEY} Error parsing request: ${e.toString()}`);
             const reply: ReplyError = {
                 error: e.toString(),
                 time: Date.now(),
@@ -33,7 +33,6 @@ async function run() {
         }
 
         if (request.cmd === "hello") {
-            console.log(`${SMILEY} Hello, how are you doing?`);
             const reply: ReplyOk = {
                 time: Date.now(),
             }

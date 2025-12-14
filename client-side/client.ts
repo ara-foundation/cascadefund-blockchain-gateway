@@ -33,8 +33,33 @@ async function processQueue() {
         const reply = JSON.parse(result.toString()) as Reply;
         resolve(reply);
     } catch (error) {
-        console.error(`::: ZeroMQ Client error:`, error);
-        reject(new Error(`Failed to communicate with payment gateway server at ${host}:${port}: ${error instanceof Error ? error.message : String(error)}`));
+        const errorMessage = error instanceof Error ? error.message : String(error);
+        // Check if it's a connection error - try to reconnect
+        if (errorMessage.includes('ENOENT') || errorMessage.includes('ECONNREFUSED') || errorMessage.includes('not connected')) {
+            try {
+                sock.disconnect(`tcp://${host}:${port}`);
+            } catch (e) {
+                // Ignore disconnect errors
+            }
+            try {
+                sock.connect(`tcp://${host}:${port}`);
+                // Retry the request after reconnection
+                await new Promise(resolve => setTimeout(resolve, 200));
+                await sock.send(JSON.stringify(req));
+                const [result] = await sock.receive();
+                const reply = JSON.parse(result.toString()) as Reply;
+                resolve(reply);
+                return;
+            } catch (retryError) {
+                console.error(`::: ZeroMQ Client: Reconnection failed:`, retryError);
+            }
+        }
+        // Check if it's a timeout error
+        if (errorMessage.includes('timeout') || errorMessage.includes('ETIMEDOUT')) {
+            reject(new Error(`Request to blockchain gateway timed out after 30 seconds for command: ${req.cmd}`));
+        } else {
+            reject(new Error(`Failed to communicate with payment gateway server at ${host}:${port}: ${errorMessage}`));
+        }
     } finally {
         isSending = false;
         // Process next item in queue

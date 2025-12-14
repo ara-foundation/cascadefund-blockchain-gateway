@@ -136,16 +136,17 @@ export async function solarForge(galaxyId: string, models: SerializedSolarForge[
 export async function spaceCoord(galaxyId: string, position: SerializedPosition): Promise<string> {
     try {
         const galaxyIdBigInt = BigInt(galaxyId);
+        // Convert floating point coordinates to integers before converting to BigInt
+        const xInt = Math.floor(position.x);
+        const yInt = Math.floor(position.y);
         const tx: ContractTransactionResponse = await allStarsContract["spaceCoord"](
             galaxyIdBigInt,
             position.userId,
-            BigInt(position.x),
-            BigInt(position.y)
+            BigInt(xInt),
+            BigInt(yInt)
         );
 
-        console.log(`Blockchain: space coord transaction submitted, tx = ${tx.hash}, confirming...`);
         await tx.wait();
-        console.log(`Blockchain: space coord transaction was confirmed ${tx.hash}`);
 
         return tx.hash;
     } catch (error: any) {
