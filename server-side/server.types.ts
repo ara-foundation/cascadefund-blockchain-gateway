@@ -7,7 +7,7 @@ export type SerializedGalaxy = {
     repoUrl: string;
     issuesUrl: string;
     name: string;
-    id: number; // uint256
+    id: string; // uint256 (as hex string)
     minX: number; // uint256
     maxX: number; // uint256
     minY: number; // uint256
@@ -124,14 +124,14 @@ export type RequestAddGalaxy = {
 export type RequestGetGalaxy = {
     cmd: "getGalaxy",
     params: {
-        galaxyId: number
+        galaxyId: string
     }
 }
 
 export type RequestSolarForge = {
     cmd: "solarForge",
     params: {
-        galaxyId: number,
+        galaxyId: string,
         models: SerializedSolarForge[]
     }
 }
@@ -139,7 +139,7 @@ export type RequestSolarForge = {
 export type RequestSpaceCoord = {
     cmd: "spaceCoord",
     params: {
-        galaxyId: number,
+        galaxyId: string,
         position: SerializedPosition
     }
 }

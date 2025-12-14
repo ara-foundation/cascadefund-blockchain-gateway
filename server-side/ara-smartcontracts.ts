@@ -46,12 +46,15 @@ function convertSolarForgeToBlockchain(solarForge: SerializedSolarForge): any {
  */
 export async function addGalaxy(galaxy: SerializedGalaxy): Promise<GalaxyResult> {
     try {
+        // Convert hex string id to BigInt
+        const galaxyIdBigInt = BigInt(galaxy.id);
+
         const tx: ContractTransactionResponse = await allStarsContract["addGalaxy"](
             galaxy.owner,
             galaxy.repoUrl,
             galaxy.issuesUrl,
             galaxy.name,
-            BigInt(galaxy.id),
+            galaxyIdBigInt,
             BigInt(galaxy.minX),
             BigInt(galaxy.maxX),
             BigInt(galaxy.minY),
@@ -64,7 +67,7 @@ export async function addGalaxy(galaxy: SerializedGalaxy): Promise<GalaxyResult>
 
         return {
             txHash: tx.hash,
-            galaxyId: galaxy.id.toString()
+            galaxyId: galaxy.id
         };
     } catch (error: any) {
         throw new Error(`Failed to add galaxy: ${error.message}`);
@@ -74,12 +77,13 @@ export async function addGalaxy(galaxy: SerializedGalaxy): Promise<GalaxyResult>
 /**
  * Get galaxy information from the blockchain
  */
-export async function getGalaxy(galaxyId: number): Promise<GalaxyInfo> {
+export async function getGalaxy(galaxyId: string): Promise<GalaxyInfo> {
     try {
-        const result = await allStarsContract["galaxies"](BigInt(galaxyId));
+        const galaxyIdBigInt = BigInt(galaxyId);
+        const result = await allStarsContract["galaxies"](galaxyIdBigInt);
 
         return {
-            galaxyId: galaxyId.toString(),
+            galaxyId: galaxyId,
             maintainer: result.owner as string,
             name: result.name as string,
             stars: 0, // Not directly available in GalaxyData struct
@@ -97,12 +101,13 @@ export async function getGalaxy(galaxyId: number): Promise<GalaxyInfo> {
  * Matches: solarForge(uint256 galaxyId, SolarForge[] calldata models)
  * SolarForge struct: string _id, string solarForgeType, string issueId, address[] users, uint256 stars
  */
-export async function solarForge(galaxyId: number, models: SerializedSolarForge[]): Promise<SolarForgeResult> {
+export async function solarForge(galaxyId: string, models: SerializedSolarForge[]): Promise<SolarForgeResult> {
     try {
         const blockchainModels = models.map(model => convertSolarForgeToBlockchain(model));
+        const galaxyIdBigInt = BigInt(galaxyId);
 
         const tx: ContractTransactionResponse = await allStarsContract["solarForge"](
-            BigInt(galaxyId),
+            galaxyIdBigInt,
             blockchainModels
         );
 
@@ -123,10 +128,11 @@ export async function solarForge(galaxyId: number, models: SerializedSolarForge[
  * Set position for a user in a galaxy
  * Matches: spaceCoord(uint256 galaxyId, address userId, uint256 x, uint256 y)
  */
-export async function spaceCoord(galaxyId: number, position: SerializedPosition): Promise<string> {
+export async function spaceCoord(galaxyId: string, position: SerializedPosition): Promise<string> {
     try {
+        const galaxyIdBigInt = BigInt(galaxyId);
         const tx: ContractTransactionResponse = await allStarsContract["spaceCoord"](
-            BigInt(galaxyId),
+            galaxyIdBigInt,
             position.userId,
             BigInt(position.x),
             BigInt(position.y)
