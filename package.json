@@ -1,5 +1,5 @@
 {
-  "name": "@ara-web/blockchain-gateway",
+  "name": "@ara-web/crypto-sockets",
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
@@ -16,14 +16,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ara-foundation/blockchain-gateway.git"
+    "url": "git+https://github.com/ara-foundation/crypto-sockets.git"
   },
   "author": "Medet Ahmetson",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/ara-foundation/blockchain-gateway/issues"
+    "url": "https://github.com/ara-foundation/crypto-sockets/issues"
   },
-  "homepage": "https://github.com/ara-foundation/blockchain-gateway#readme",
+  "homepage": "https://github.com/ara-foundation/crypto-sockets#readme",
   "description": "",
   "devDependencies": {
     "@types/node": "^24.1.0",
