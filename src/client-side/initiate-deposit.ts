@@ -1,12 +1,11 @@
 import "dotenv/config";
 import deployedContracts from "@ara-web/cascadefund-smartcontracts/lib/deployed_contracts.json"
 import { Contract, ContractTransactionResponse, parseEther } from "ethers";
-import { EnvVar, getEnvVar, sleep } from "../app";
+import { sleep } from "../app";
 import { ReplyDepositInitiation, RequestDepositInitiation, InitialDepositParams } from "../types";
-import { signer } from "../server-side/cascadefund-smartcontracts";
+import { signer, networkID } from "../types";
 import { send } from "./client";
 
-const networkID = getEnvVar(EnvVar.NETWORK_ID) as keyof typeof deployedContracts;
 const stablecoinContract = new Contract(deployedContracts[networkID]["Stablecoin"].address, deployedContracts[networkID]["Stablecoin"].abi, signer);
 
 const specID = 1;

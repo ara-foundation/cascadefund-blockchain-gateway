@@ -1,3 +1,16 @@
+import { JsonRpcProvider, Wallet } from "ethers";
+import deployedContracts from "@ara-web/cascadefund-smartcontracts/lib/deployed_contracts.json"
+import { EnvVar, getEnvVar } from "./app";
+
+export const networkID = getEnvVar(EnvVar.NETWORK_ID) as keyof typeof deployedContracts;
+const networkUrl = getEnvVar(EnvVar.NETWORK_URL);
+const serverPrivateKey = getEnvVar(EnvVar.SERVER_PRIVATE_KEY);
+export const provider = new JsonRpcProvider(networkUrl);
+export const signer = new Wallet(serverPrivateKey, provider);
+
+export const serverAddress = signer.address;
+
+
 export const EMPTY_ADDRESS = "0x0000000000000000000000000000000000000000";
 
 // Cascadefund-smartcontracts types

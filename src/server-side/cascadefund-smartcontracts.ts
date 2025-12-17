@@ -12,14 +12,6 @@ import { EnvVar, getEnvVar } from "../app";
 import { SAD } from "../emoji";
 import { type OpensourceUsers, type CreateProject, type InitialDepositParams, type WithdrawerInfo, type CategoryBusiness, type User, EMPTY_ADDRESS } from "../types";
 
-const networkID = getEnvVar(EnvVar.NETWORK_ID) as keyof typeof deployedContracts;
-const networkUrl = getEnvVar(EnvVar.NETWORK_URL);
-const serverPrivateKey = getEnvVar(EnvVar.SERVER_PRIVATE_KEY);
-const provider = new JsonRpcProvider(networkUrl);
-export const signer = new Wallet(serverPrivateKey, provider);
-
-export const serverAddress = signer.address;
-
 const hyperpaymentContract = new Contract(deployedContracts[networkID]["HyperpaymentV1"].address, deployedContracts[networkID]["HyperpaymentV1"].abi, signer);
 const hyperpaymentInterface = new ethers.Interface(deployedContracts[networkID]["HyperpaymentV1"].abi)
 const customerContract = new Contract(deployedContracts[networkID]["CategoryCustomer"].address, deployedContracts[networkID]["CategoryCustomer"].abi, signer);
