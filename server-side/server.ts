@@ -16,7 +16,8 @@ async function run() {
     const sock = new zmq.Reply();
 
     await sock.bind(`tcp://0.0.0.0:${getEnvVar(EnvVar.PORT)}`);
-    console.log(`${SMILEY} Blockchain Gateway runs on port 0.0.0.0:${getEnvVar(EnvVar.PORT)}`);
+    console.log(`${SMILEY} Crypto Sockets available on port ${getEnvVar(EnvVar.PORT)}`);
+    console.log(`${SMILEY} Connect to crypto sockets by ${getEnvVar(EnvVar.HOST)}:${getEnvVar(EnvVar.PORT)}`);
 
     for await (const [msg] of sock) {
         let request: Request;
