@@ -1,4 +1,4 @@
-import { ReplyError, ReplyGalaxyCreation, ReplyGalaxyInfo, ReplyOk, ReplySolarForge, ReplyTx, Request } from "./server.types";
+import { ReplyError, ReplyGalaxyCreation, ReplyGalaxyInfo, ReplyOk, ReplySolarForge, ReplyTx, Request } from "../types";
 import { addGalaxy, getGalaxy, spaceCoord, solarForge } from "./ara-smartcontracts";
 
 export function isAraAllStarsReq(cmd: string): boolean {

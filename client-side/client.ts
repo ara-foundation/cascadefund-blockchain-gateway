@@ -1,7 +1,7 @@
 import * as zmq from "zeromq"
 import "dotenv/config";
-import { EnvVar, getEnvVar } from "../server-side/app"
-import { type Reply, type Request } from "../server-side/server.types";
+import { EnvVar, getEnvVar } from "../app"
+import { type Reply, type Request } from "../types";
 
 const sock = new zmq.Request({
     receiveTimeout: 30000, // 30 second timeout

@@ -4,9 +4,9 @@ import {
     JsonRpcProvider,
     Wallet
 } from "ethers";
-import { EnvVar, getEnvVar } from "./app";
+import { EnvVar, getEnvVar } from "../app";
 import { SAD } from "./emoji";
-import { SerializedGalaxy, SerializedPosition, SerializedSolarForge, GalaxyResult, GalaxyInfo, SolarForgeResult } from "./server.types";
+import { SerializedGalaxy, SerializedPosition, SerializedSolarForge, GalaxyResult, GalaxyInfo, SolarForgeResult } from "../types";
 
 // Import smartcontracts - tsx handles ESM imports properly
 import { allStarsAbi, allStarsAddress } from "@ara-web/smartcontracts";

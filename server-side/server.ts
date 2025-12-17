@@ -1,12 +1,12 @@
 import * as zmq from "zeromq";
 import dotenv from "dotenv";
-import { EnvVar, getEnvVar, isDev } from "./app";
+import { EnvVar, getEnvVar, isDev } from "../app";
 
 if (isDev()) {
     dotenv.config({ quiet: true, debug: false });
 }
 
-import { ReplyError, ReplyOk, Request } from "./server.types";
+import { ReplyError, ReplyOk, Request } from "../types";
 import { SMILEY } from "./emoji";
 import { isCascadefundPaymentReq, cascadeFundRep } from "./cascadefund-payment";
 import { isAraAllStarsReq, araAllStarsRep } from "./ara-all-stars";

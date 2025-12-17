@@ -1,5 +1,5 @@
 import "dotenv/config";
-import { ReplyTx, RequestSetWithdrawer } from "../server-side/server.types";
+import { ReplyTx, RequestSetWithdrawer } from "../types";
 import { send } from "./client";
 import { SMILEY } from "../server-side/emoji";
 

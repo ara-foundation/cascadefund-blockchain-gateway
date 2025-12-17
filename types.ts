@@ -1,4 +1,47 @@
-import { CreateProject, InitialDeposit, InitialDepositParams, OpensourceUsers, WithdrawerInfo } from "./cascadefund-smartcontracts"
+// Cascadefund-smartcontracts types
+export type CategoryName = string;
+
+export type CategoryBusiness = {
+    purl: string; //"pkg:git@github.com/ara-foundation/cascade-blockchain-gateway.git"
+    username: string; //"ahmetson";
+    authProvider: string; // "github.com";
+    withdraw: string;
+}
+
+export type User = {
+    category: CategoryName;
+    payload: string;
+}
+
+export type OpensourceUsers = {
+    deps: string[];
+    envs: string[];
+    business: CategoryBusiness;
+}
+
+export type CreateProject = {
+    txHash: string;
+    specID: number;
+    projectID: number;
+}
+
+export type InitialDeposit = {
+    payload: string;
+    depositAddress: string;
+}
+
+export type InitialDepositParams = {
+    counter: number; // such as Date.now()
+    amount: string; // In wei format
+    resourceToken: string;
+    resourceName: string;
+}
+
+export type WithdrawerInfo = {
+    withdrawer: string;
+    amount: string;
+    resourceToken: string;
+}
 
 // Generic serialized types (as received from MongoDB/TypeScript)
 // Matches addGalaxy function signature: address owner_, string repoUrl_, string issuesUrl_, string name_, uint256 id_, uint256 minX, uint256 maxX, uint256 minY, uint256 maxY

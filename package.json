@@ -6,6 +6,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "NODE_ENV=development tsx server-side/server.ts",
     "hello-server": "ts-node client-side/hello.ts",
+    "hello-remote": "NODE_ENV=development HOST=72.60.211.15 PORT=5555 ts-node client-side/hello.ts",
     "create-project": "ts-node client-side/create-project.ts",
     "set-withdrawer": " ts-node client-side/set-withdrawer.ts",
     "withdrawer-info": " ts-node client-side/get-withdrawer.ts",

@@ -1,7 +1,8 @@
-import { type RequestHello } from "../server-side/server.types";
+import { type RequestHello } from "../types";
 import { send } from "./client";
 
 async function run() {
+
     const json: RequestHello = {
         "cmd": "hello",
     }

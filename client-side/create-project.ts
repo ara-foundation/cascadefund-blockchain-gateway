@@ -1,6 +1,6 @@
 import "dotenv/config";
-import { OpensourceUsers, EMPTY_ADDRESS } from "../server-side/cascadefund-smartcontracts";
-import { ReplyProjectCreation, type RequestProjectCreation } from "../server-side/server.types";
+import { EMPTY_ADDRESS } from "../server-side/cascadefund-smartcontracts";
+import { ReplyProjectCreation, type RequestProjectCreation, OpensourceUsers } from "../types";
 import { send } from "./client";
 import { getPurls } from "./pkg";
 

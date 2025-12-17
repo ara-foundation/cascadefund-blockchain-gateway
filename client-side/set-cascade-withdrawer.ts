@@ -1,5 +1,5 @@
 import "dotenv/config";
-import { ReplyTx, RequestSetCascadeWithdrawer } from "../server-side/server.types";
+import { ReplyTx, RequestSetCascadeWithdrawer } from "../types";
 import { send } from "./client";
 import { SMILEY } from "../server-side/emoji";
 import { getFirstPurl } from "./pkg";

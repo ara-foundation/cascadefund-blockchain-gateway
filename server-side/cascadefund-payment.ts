@@ -1,4 +1,4 @@
-import { ReplyCascadeInfo, ReplyDepositInitiation, ReplyError, ReplyOk, ReplyProjectCreation, ReplyTx, ReplyWithdrawerInfo, Request } from "./server.types";
+import { ReplyCascadeInfo, ReplyDepositInitiation, ReplyError, ReplyOk, ReplyProjectCreation, ReplyTx, ReplyWithdrawerInfo, Request } from "../types";
 import { calculateAddress, cascadeWithdraw, createOpensourceProject, getCascadeWithdrawer, getWithdrawInfo, hyperpay, initialDepositPayload, setCascadeMaintainer, setWithdrawer, withdraw, withdrawAll } from "./cascadefund-smartcontracts";
 
 export function isCascadefundPaymentReq(cmd: string): boolean {

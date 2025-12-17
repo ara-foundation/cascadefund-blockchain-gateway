@@ -1,4 +1,4 @@
-import { SAD } from "./emoji";
+import { SAD } from "./server-side/emoji";
 const nodeEnv = process.env.NODE_ENV || "development";
 
 export enum EnvVar {

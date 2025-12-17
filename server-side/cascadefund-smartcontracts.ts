@@ -1,61 +1,18 @@
-import { 
-    AbiCoder, 
-    Contract, 
-    ContractTransactionResponse, 
-    ethers, 
-    formatEther, 
-    JsonRpcProvider, 
-    Wallet 
+import {
+    AbiCoder,
+    Contract,
+    ContractTransactionResponse,
+    ethers,
+    formatEther,
+    JsonRpcProvider,
+    Wallet
 } from "ethers";
-import { EnvVar, getEnvVar } from "./app";
+import { EnvVar, getEnvVar } from "../app";
 import { SAD } from "./emoji";
 import deployedContracts from "@ara-web/cascadefund-smartcontracts/lib/deployed_contracts.json"
-
-type CategoryName = string;
+import type { OpensourceUsers, CreateProject, InitialDepositParams, WithdrawerInfo, CategoryBusiness, User } from "../types";
 
 export const EMPTY_ADDRESS = "0x0000000000000000000000000000000000000000";
-
-type CategoryBusiness = {
-    purl: string; //"pkg:git@github.com/ara-foundation/cascade-blockchain-gateway.git"
-    username: string; //"ahmetson";
-    authProvider: string; // "github.com";
-    withdraw: string;
-}
-
-type User = {
-  category: CategoryName;
-  payload: string;
-}
-
-export type OpensourceUsers = {
-    deps: string[];
-    envs: string[];
-    business: CategoryBusiness;
-}
-
-export type CreateProject = {
-    txHash: string;
-    specID: number;
-    projectID: number;
-}
-
-export type InitialDeposit = {
-    payload: string;
-    depositAddress: string;
-}
-
-export type InitialDepositParams = {
-    counter: number; // such as Date.now()
-    amount: string; // In wei format
-    resourceToken: string;
-    resourceName: string;
-}
-
-export type WithdrawerInfo = {
-    withdrawer: string;
-    amount: string;
-    resourceToken: string;
-}
 
 const networkID = getEnvVar(EnvVar.NETWORK_ID) as keyof typeof deployedContracts;
 const networkUrl = getEnvVar(EnvVar.NETWORK_URL);
@@ -92,17 +49,17 @@ export function getOpensourceSpecId(): number {
 }
 
 function getBusinessPayload(business: CategoryBusiness): string {
-    const encodedPayload = AbiCoder.defaultAbiCoder().encode(["string","string","string","address"], [business.purl, business.username, business.authProvider, business.withdraw]);
+    const encodedPayload = AbiCoder.defaultAbiCoder().encode(["string", "string", "string", "address"], [business.purl, business.username, business.authProvider, business.withdraw]);
     return encodedPayload;
 }
 
 function getEnvPayload(envs: string[]): string {
-    const encodedPayload = AbiCoder.defaultAbiCoder().encode(["uint","string[]"], [envs.length, envs]);
+    const encodedPayload = AbiCoder.defaultAbiCoder().encode(["uint", "string[]"], [envs.length, envs]);
     return encodedPayload;
 }
 
 function getDepPayload(purls: string[]): string {
-    const encodedPayload = AbiCoder.defaultAbiCoder().encode(["uint","string[]"], [purls.length, purls]);
+    const encodedPayload = AbiCoder.defaultAbiCoder().encode(["uint", "string[]"], [purls.length, purls]);
     return encodedPayload;
 }
 
@@ -131,9 +88,9 @@ export async function getProjectCounter(specID: number): Promise<number> {
 
 export async function createOpensourceProject(users: OpensourceUsers): Promise<CreateProject> {
     const hashedUsers: User[] = [
-      { category: "business", payload: getBusinessPayload(users.business) },
-      { category: "environment", payload: getEnvPayload(users.envs) },
-      { category: "dep", payload: getDepPayload(users.deps) }  
+        { category: "business", payload: getBusinessPayload(users.business) },
+        { category: "environment", payload: getEnvPayload(users.envs) },
+        { category: "dep", payload: getDepPayload(users.deps) }
     ]
 
     return await createProject(getOpensourceSpecId(), hashedUsers);
@@ -181,11 +138,11 @@ export function initialDepositPayload(params: InitialDepositParams): string {
             "address",
             "string"
         ], [
-            params.counter, 
-            params.amount, 
-            params.resourceToken, 
-            params.resourceName
-        ]
+        params.counter,
+        params.amount,
+        params.resourceToken,
+        params.resourceName
+    ]
     );
     return encodedPayload;
 }
@@ -231,10 +188,10 @@ export async function getWithdrawInfo(specID: number, projectID: number): Promis
 
 export async function withdraw(specID: number, projectID: number, amount: string): Promise<string> {
     const info = await getWithdrawInfo(specID, projectID);
-    if (info.withdrawer === EMPTY_ADDRESS) {    
+    if (info.withdrawer === EMPTY_ADDRESS) {
         throw `server has no withdraw token, checking can server withdraw on behalf of the user?`;
     }
-        
+
     const withdrawRole = "0xa8a7bc421f721cb936ea99efdad79237e6ee0b871a2a08cf648691f9584cdc77";
     const serverCanWithdraw: boolean = await businessContract["hasRole"](withdrawRole, serverAddress);
     if (!serverCanWithdraw) {
@@ -244,7 +201,7 @@ export async function withdraw(specID: number, projectID: number, amount: string
     }
 
     if (BigInt(amount) > BigInt(info.amount)) {
-        throw `User has -${formatEther(BigInt(amount)-BigInt(info.amount))} coins than asked for withdraw. Please pass correct argument to this function`;
+        throw `User has -${formatEther(BigInt(amount) - BigInt(info.amount))} coins than asked for withdraw. Please pass correct argument to this function`;
     }
 
     const tx: ContractTransactionResponse = await businessContract["withdraw"](specID, projectID, amount);
@@ -257,10 +214,10 @@ export async function withdraw(specID: number, projectID: number, amount: string
 
 export async function withdrawAll(specID: number, projectID: number): Promise<string> {
     const info = await getWithdrawInfo(specID, projectID);
-    if (info.withdrawer === EMPTY_ADDRESS) {    
+    if (info.withdrawer === EMPTY_ADDRESS) {
         throw `server has no withdraw token, checking can server withdraw on behalf of the user?`;
     }
-        
+
     const withdrawRole = "0xa8a7bc421f721cb936ea99efdad79237e6ee0b871a2a08cf648691f9584cdc77";
     const serverCanWithdraw: boolean = await businessContract["hasRole"](withdrawRole, serverAddress);
     if (!serverCanWithdraw) {
