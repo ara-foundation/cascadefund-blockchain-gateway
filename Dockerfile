@@ -13,7 +13,7 @@ RUN npm install && npm install tsx --save-dev
 RUN node -e "const fs = require('fs'); const pkgPath = './node_modules/@ara-web/smartcontracts/package.json'; const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf8')); pkg.exports = { '.': { types: './abis.ts', default: './abis.ts' }, './abis.ts': { types: './abis.ts', default: './abis.ts' } }; fs.writeFileSync(pkgPath, JSON.stringify(pkg, null, 2));"
 
 # Copy source code
-COPY server-side/ ./server-side/
+COPY src/ ./src/
 
 # Expose the port (default PORT env var should be set)
 EXPOSE 5555

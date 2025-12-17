@@ -7,12 +7,10 @@ import {
     JsonRpcProvider,
     Wallet
 } from "ethers";
+import deployedContracts from "@ara-web/cascadefund-smartcontracts/lib/deployed_contracts.json"
 import { EnvVar, getEnvVar } from "../app";
 import { SAD } from "../emoji";
-import deployedContracts from "@ara-web/cascadefund-smartcontracts/lib/deployed_contracts.json"
-import type { OpensourceUsers, CreateProject, InitialDepositParams, WithdrawerInfo, CategoryBusiness, User } from "../types";
-
-export const EMPTY_ADDRESS = "0x0000000000000000000000000000000000000000";
+import { type OpensourceUsers, type CreateProject, type InitialDepositParams, type WithdrawerInfo, type CategoryBusiness, type User, EMPTY_ADDRESS } from "../types";
 
 const networkID = getEnvVar(EnvVar.NETWORK_ID) as keyof typeof deployedContracts;
 const networkUrl = getEnvVar(EnvVar.NETWORK_URL);

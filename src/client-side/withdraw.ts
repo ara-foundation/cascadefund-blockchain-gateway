@@ -1,8 +1,8 @@
 import "dotenv/config";
+import { parseEther } from "ethers";
+import { SMILEY } from "../emoji";
 import { ReplyTx, RequestWithdraw } from "../types";
 import { send } from "./client";
-import { SMILEY } from "../emoji";
-import { parseEther } from "ethers";
 
 async function run() {
     const specID = 1;

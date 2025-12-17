@@ -1,3 +1,5 @@
+export const EMPTY_ADDRESS = "0x0000000000000000000000000000000000000000";
+
 // Cascadefund-smartcontracts types
 export type CategoryName = string;
 

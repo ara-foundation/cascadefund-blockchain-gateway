@@ -4,16 +4,15 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "NODE_ENV=development tsx server-side/server.ts",
-    "hello-server": "ts-node client-side/hello.ts",
-    "hello-remote": "NODE_ENV=development HOST=72.60.211.15 PORT=5555 ts-node client-side/hello.ts",
-    "create-project": "ts-node client-side/create-project.ts",
-    "set-withdrawer": " ts-node client-side/set-withdrawer.ts",
-    "withdrawer-info": " ts-node client-side/get-withdrawer.ts",
-    "withdraw": " ts-node client-side/withdraw.ts",
-    "cascade-info": " ts-node client-side/cascade-info.ts",
-    "set-cascade-withdrawer": " ts-node client-side/set-cascade-withdrawer.ts",
-    "cascade-withdraw": " ts-node client-side/cascade-withdraw.ts"
+    "dev": "NODE_ENV=development tsx src/server-side/server.ts",
+    "hello-server": "ts-node src/client-side/hello.ts",
+    "create-project": "ts-node src/client-side/create-project.ts",
+    "set-withdrawer": " ts-node src/client-side/set-withdrawer.ts",
+    "withdrawer-info": " ts-node src/client-side/get-withdrawer.ts",
+    "withdraw": " ts-node src/client-side/withdraw.ts",
+    "cascade-info": " ts-node src/client-side/cascade-info.ts",
+    "set-cascade-withdrawer": " ts-node src/client-side/set-cascade-withdrawer.ts",
+    "cascade-withdraw": " ts-node src/client-side/cascade-withdraw.ts"
   },
   "repository": {
     "type": "git",
