@@ -1,0 +1,14 @@
+services:
+  crypto-sockets:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    container_name: ara-crypto-sockets
+    restart: unless-stopped
+    ports:
+      - "5555:5555"
+    env_file:
+      - ./.env
+    environment:
+      NODE_ENV: production
+      PORT: ${PORT:-5555}
