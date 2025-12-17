@@ -98,7 +98,7 @@ async function createProject(specID: number, users: User[]): Promise<CreateProje
     }
 
     const receipt = await provider.getTransactionReceipt(tx.hash);
-    receipt?.logs.forEach((log) => {
+    receipt?.logs.forEach((log: any) => {
         try {
             const parsedLog = hyperpaymentInterface.parseLog(log);
             if (parsedLog?.name === "CreateProject") {
