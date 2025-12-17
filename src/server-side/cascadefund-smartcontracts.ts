@@ -4,13 +4,11 @@ import {
     ContractTransactionResponse,
     ethers,
     formatEther,
-    JsonRpcProvider,
-    Wallet
 } from "ethers";
 import deployedContracts from "@ara-web/cascadefund-smartcontracts/lib/deployed_contracts.json"
 import { EnvVar, getEnvVar } from "../app";
 import { SAD } from "../emoji";
-import { type OpensourceUsers, type CreateProject, type InitialDepositParams, type WithdrawerInfo, type CategoryBusiness, type User, EMPTY_ADDRESS } from "../types";
+import { type OpensourceUsers, type CreateProject, type InitialDepositParams, type WithdrawerInfo, type CategoryBusiness, type User, EMPTY_ADDRESS, networkID, provider, signer, serverAddress } from "../types";
 
 const hyperpaymentContract = new Contract(deployedContracts[networkID]["HyperpaymentV1"].address, deployedContracts[networkID]["HyperpaymentV1"].abi, signer);
 const hyperpaymentInterface = new ethers.Interface(deployedContracts[networkID]["HyperpaymentV1"].abi)

@@ -1,6 +1,6 @@
 {
   "name": "@ara-web/crypto-sockets",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Crypto sockets client and server for blockchain gateway communication",
   "main": "dist/index.js",
   "module": "dist/index.js",
@@ -27,9 +27,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "clean": "rm -rf dist",
-    "build-client": "npm run clean && tsc -p tsconfig.client.json",
-    "build": "npm run build-client",
-    "prepublishOnly": "npm run build-client",
+    "build": "npm run clean && tsc -p tsconfig.client.json",
+    "prepublishOnly": "npm run build",
     "dev": "NODE_ENV=development tsx src/server-side/server.ts",
     "hello-server": "ts-node src/client-side/hello.ts",
     "create-project": "ts-node src/client-side/create-project.ts",
