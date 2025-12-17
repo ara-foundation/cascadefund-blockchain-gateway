@@ -1,7 +1,7 @@
 import "dotenv/config";
 import { ReplyWithdrawerInfo, RequestWithdrawerInfo } from "../types";
 import { send } from "./client";
-import { SMILEY } from "../server-side/emoji";
+import { SMILEY } from "../emoji";
 
 async function run() {
     const specID = 1;

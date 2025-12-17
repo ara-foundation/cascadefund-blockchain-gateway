@@ -7,7 +7,7 @@ if (isDev()) {
 }
 
 import { ReplyError, ReplyOk, Request } from "../types";
-import { SMILEY } from "./emoji";
+import { SMILEY } from "../emoji";
 import { isCascadefundPaymentReq, cascadeFundRep } from "./cascadefund-payment";
 import { isAraAllStarsReq, araAllStarsRep } from "./ara-all-stars";
 

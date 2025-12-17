@@ -8,7 +8,7 @@ import {
     Wallet
 } from "ethers";
 import { EnvVar, getEnvVar } from "../app";
-import { SAD } from "./emoji";
+import { SAD } from "../emoji";
 import deployedContracts from "@ara-web/cascadefund-smartcontracts/lib/deployed_contracts.json"
 import type { OpensourceUsers, CreateProject, InitialDepositParams, WithdrawerInfo, CategoryBusiness, User } from "../types";
 

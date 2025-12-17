@@ -5,7 +5,7 @@ import {
     Wallet
 } from "ethers";
 import { EnvVar, getEnvVar } from "../app";
-import { SAD } from "./emoji";
+import { SAD } from "../emoji";
 import { SerializedGalaxy, SerializedPosition, SerializedSolarForge, GalaxyResult, GalaxyInfo, SolarForgeResult } from "../types";
 
 // Import smartcontracts - tsx handles ESM imports properly
