@@ -21,12 +21,12 @@
     "src/types.ts",
     "src/app.ts",
     "src/emoji.ts",
-    "src/client-side/client.ts",
-    "src/client-side/pkg.ts"
+    "src/client-side/**/*",
   ],
   "exclude": [
     "node_modules",
     "dist",
+    "src/server-side/**/*",
     "**/*.test.ts",
     "**/*.spec.ts"
   ]
