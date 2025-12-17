@@ -1,7 +1,3 @@
-# Source - https://stackoverflow.com/a
-# Posted by Martin Zeitler, modified by community. See post 'Timeline' for change history
-# Retrieved 2025-12-17, License - CC BY-SA 4.0
-
 name: Deploy to VPS
 
 on:
@@ -14,14 +10,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Calling crypto-sockets/deploy.sh script
-        uses: appleboy/ssh-action@v1
+        uses: appleboy/ssh-action@v1.2.4
         with:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_KEY }}
+          passphrase: ${{ secrets.VPS_PASSPHRASE }}
           port: 22
-          timeout: 30s
-          command_timeout: 10m
           debug: true
           script: |
             cd /srv/crypto-sockets
