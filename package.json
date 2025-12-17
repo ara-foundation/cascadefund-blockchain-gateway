@@ -1,9 +1,29 @@
 {
   "name": "@ara-web/crypto-sockets",
   "version": "1.0.0",
-  "main": "index.js",
+  "description": "Crypto sockets client and server for blockchain gateway communication",
+  "main": "dist/index.js",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "files": [
+    "dist",
+    "src/server-side",
+    "src/app.ts",
+    "src/emoji.ts",
+    "README.md"
+  ],
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
+    "build-client": "tsc -p tsconfig.client.json",
+    "build": "npm run build-client",
+    "prepublishOnly": "npm run build-client",
     "dev": "NODE_ENV=development tsx src/server-side/server.ts",
     "hello-server": "ts-node src/client-side/hello.ts",
     "create-project": "ts-node src/client-side/create-project.ts",
@@ -24,7 +44,6 @@
     "url": "https://github.com/ara-foundation/crypto-sockets/issues"
   },
   "homepage": "https://github.com/ara-foundation/crypto-sockets#readme",
-  "description": "",
   "devDependencies": {
     "@types/node": "^24.1.0",
     "ts-node": "^10.9.2",
