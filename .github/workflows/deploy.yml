@@ -11,6 +11,8 @@ jobs:
     steps:
       - name: Calling crypto-sockets/deploy.sh script
         uses: appleboy/ssh-action@v1.2.4
+        env:
+          VPS_PASSPHRASE: ${{ secrets.VPS_PASSPHRASE }}
         with:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
@@ -18,6 +20,21 @@ jobs:
           passphrase: ${{ secrets.VPS_PASSPHRASE }}
           port: 22
           debug: true
+          envs: VPS_PASSPHRASE
           script: |
+            # Set up ssh-agent for the passphrase-protected GitHub SSH key
+            eval $(ssh-agent -s)
+            # Add the SSH key to ssh-agent with passphrase using SSH_ASKPASS
+            # Create a simple askpass script
+            echo '#!/bin/sh' > /tmp/ssh-askpass.sh
+            echo "echo \"$VPS_PASSPHRASE\"" >> /tmp/ssh-askpass.sh
+            chmod +x /tmp/ssh-askpass.sh
+            # Use SSH_ASKPASS to provide passphrase non-interactively
+            DISPLAY=:0 SSH_ASKPASS=/tmp/ssh-askpass.sh ssh-add /root/.ssh/github_actions < /dev/null
+            # Export ssh-agent environment variables for git to use
+            export SSH_AUTH_SOCK
+            export SSH_AGENT_PID
             cd /srv/crypto-sockets
             ./deploy.sh
+            # Clean up ssh-agent
+            ssh-agent -k
