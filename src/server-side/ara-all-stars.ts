@@ -22,6 +22,7 @@ export async function araAllStarsRep(request: Request): Promise<ReplyOk | ReplyE
             const result = await addGalaxy(request.params);
             console.log(`[DEBUG] addGalaxy completed, result:`, result);
             const reply: ReplyGalaxyCreation = {
+                msgId: request.msgId,
                 time: Date.now(),
                 params: result
             }
@@ -31,6 +32,7 @@ export async function araAllStarsRep(request: Request): Promise<ReplyOk | ReplyE
             console.error(`[DEBUG] Error in addGalaxy:`, error);
             const reply: ReplyError = {
                 error: error.message || String(error),
+                msgId: request.msgId ?? 0,
                 time: Date.now(),
             }
             return reply;
@@ -43,6 +45,7 @@ export async function araAllStarsRep(request: Request): Promise<ReplyOk | ReplyE
             const info = await getGalaxy(galaxyId);
             console.log(`[DEBUG] getGalaxy completed, info:`, info);
             const reply: ReplyGalaxyInfo = {
+                msgId: request.msgId ?? 0,
                 time: Date.now(),
                 params: info
             }
@@ -52,6 +55,7 @@ export async function araAllStarsRep(request: Request): Promise<ReplyOk | ReplyE
             console.error(`[DEBUG] Error in getGalaxy:`, error);
             const reply: ReplyError = {
                 error: error.message || String(error),
+                msgId: request.msgId ?? 0,
                 time: Date.now(),
             }
             return reply;
@@ -65,6 +69,7 @@ export async function araAllStarsRep(request: Request): Promise<ReplyOk | ReplyE
             const result = await solarForge(galaxyId, models);
             console.log(`[DEBUG] solarForge completed, result:`, result);
             const reply: ReplySolarForge = {
+                msgId: request.msgId,
                 time: Date.now(),
                 params: result
             }
@@ -74,6 +79,7 @@ export async function araAllStarsRep(request: Request): Promise<ReplyOk | ReplyE
             console.error(`[DEBUG] Error in solarForge:`, error);
             const reply: ReplyError = {
                 error: error.message || String(error),
+                msgId: request.msgId ?? 0,
                 time: Date.now(),
             }
             return reply;
@@ -87,6 +93,7 @@ export async function araAllStarsRep(request: Request): Promise<ReplyOk | ReplyE
             const tx = await spaceCoord(galaxyId, position);
             console.log(`[DEBUG] spaceCoord completed, tx hash: ${tx}`);
             const reply: ReplyTx = {
+                msgId: request.msgId ?? 0,
                 time: Date.now(),
                 params: {
                     tx: tx
@@ -98,6 +105,7 @@ export async function araAllStarsRep(request: Request): Promise<ReplyOk | ReplyE
             console.error(`[DEBUG] Error in spaceCoord:`, error);
             const reply: ReplyError = {
                 error: error.message || String(error),
+                msgId: request.msgId ?? 0,
                 time: Date.now(),
             }
             return reply;
@@ -106,6 +114,7 @@ export async function araAllStarsRep(request: Request): Promise<ReplyOk | ReplyE
         console.log(`[DEBUG] Unsupported command in araAllStarsRep: ${request.cmd}`);
         const reply: ReplyError = {
             error: `unsupported command`,
+            msgId: request.msgId ?? 0,
             time: Date.now(),
         }
         return reply;

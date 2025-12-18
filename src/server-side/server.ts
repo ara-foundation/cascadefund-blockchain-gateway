@@ -9,7 +9,7 @@ if (isDev()) {
     dotenv.config({ quiet: true, debug: false });
 }
 
-import { ReplyError, ReplyOk, Request } from "../types";
+import { ReplyError, ReplyOk, Request, ReplyHeartbeat } from "../types";
 import { SMILEY } from "../emoji";
 import { isCascadefundPaymentReq, cascadeFundRep } from "./cascadefund-payment";
 import { isAraAllStarsReq, araAllStarsRep } from "./ara-all-stars";
@@ -20,8 +20,8 @@ async function run() {
     const host = getEnvVar(EnvVar.HOST);
     const bindAddress = `tcp://0.0.0.0:${port}`;
     
-    console.log(`[DEBUG] Creating ZeroMQ Reply socket...`);
-    const sock = new zmq.Reply();
+    console.log(`[DEBUG] Creating ZeroMQ Router socket...`);
+    const sock = new zmq.Router();
 
     // Add event listeners for debugging (if available)
     try {
@@ -67,55 +67,92 @@ async function run() {
     console.log(`${SMILEY} Connect to crypto sockets by ${host}:${port}`);
     console.log(`[DEBUG] Server is ready and waiting for connections...`);
 
-    for await (const [msg] of sock) {
+    // Process requests asynchronously
+    for await (const [clientIdentity, msg] of sock) {
+        // ROUTER receives [identity, message] as multi-part message
         console.log(`[DEBUG] Received message, length: ${msg.length} bytes`);
-        let request: Request;
-        try {
-            const msgStr = msg.toString();
-            console.log(`[DEBUG] Message content: ${msgStr.substring(0, 200)}${msgStr.length > 200 ? '...' : ''}`);
-            request = JSON.parse(msgStr) as Request;
-            console.log(`[DEBUG] Parsed request - cmd: ${request.cmd}`);
-        } catch (e: any) {
-            console.error(`[DEBUG] Error parsing message:`, e);
-            const reply: ReplyError = {
-                error: e.toString(),
-                time: Date.now(),
+        
+        // Process request asynchronously (don't block on slow operations)
+        (async () => {
+            let request: Request;
+            try {
+                const msgStr = msg.toString();
+                console.log(`[DEBUG] Message content: ${msgStr.substring(0, 200)}${msgStr.length > 200 ? '...' : ''}`);
+                request = JSON.parse(msgStr) as Request;
+                console.log(`[DEBUG] Parsed request - cmd: ${request.cmd}, msgId: ${request.msgId}`);
+            } catch (e: any) {
+                console.error(`[DEBUG] Error parsing message:`, e);
+                const reply: ReplyError = {
+                    error: e.toString(),
+                    msgId: 0, // Unknown msgId if parsing failed
+                    time: Date.now(),
+                }
+                console.log(`[DEBUG] Sending error reply`);
+                // ROUTER sends [identity, message]
+                await sock.send([clientIdentity, JSON.stringify(reply)]);
+                return;
             }
-            console.log(`[DEBUG] Sending error reply`);
-            await sock.send(JSON.stringify(reply));
-            continue;
-        }
 
-        if (request.cmd === "hello") {
-            console.log(`[DEBUG] Handling 'hello' command`);
-            const reply: ReplyOk = {
-                time: Date.now(),
+            // Extract msgId for response correlation (required, should be set by client)
+            const msgId = request.msgId ?? 0;
+
+            // Handle heartbeat immediately
+            if (request.cmd === "heartbeat") {
+                console.log(`[DEBUG] Handling 'heartbeat' command`);
+                const reply: ReplyHeartbeat = {
+                    cmd: "heartbeat",
+                    msgId: msgId,
+                    time: Date.now(),
+                }
+                await sock.send([clientIdentity, JSON.stringify(reply)]);
+                console.log(`[DEBUG] Sent 'heartbeat' reply`);
+                return;
             }
-            await sock.send(JSON.stringify(reply));
-            console.log(`[DEBUG] Sent 'hello' reply`);
-            continue;
-        } else if (isCascadefundPaymentReq(request.cmd)) {
-            console.log(`[DEBUG] Handling cascadefund payment request: ${request.cmd}`);
-            const reply = await cascadeFundRep(request);
-            await sock.send(JSON.stringify(reply));
-            console.log(`[DEBUG] Sent cascadefund payment reply`);
-            continue;
-        } else if (isAraAllStarsReq(request.cmd)) {
-            console.log(`[DEBUG] Handling ara all stars request: ${request.cmd}`);
-            const reply = await araAllStarsRep(request);
-            await sock.send(JSON.stringify(reply));
-            console.log(`[DEBUG] Sent ara all stars reply`);
-            continue;
-        } else {
-            console.log(`[DEBUG] Unsupported command: ${request.cmd}`);
-            const reply: ReplyError = {
-                error: `unsupported command`,
-                time: Date.now(),
+
+            if (request.cmd === "hello") {
+                console.log(`[DEBUG] Handling 'hello' command`);
+                const reply: ReplyOk = {
+                    msgId: msgId,
+                    time: Date.now(),
+                }
+                await sock.send([clientIdentity, JSON.stringify(reply)]);
+                console.log(`[DEBUG] Sent 'hello' reply`);
+                return;
+            } else if (isCascadefundPaymentReq(request.cmd)) {
+                console.log(`[DEBUG] Handling cascadefund payment request: ${request.cmd}`);
+                const reply = await cascadeFundRep(request);
+                await sock.send([clientIdentity, JSON.stringify(reply)]);
+                console.log(`[DEBUG] Sent cascadefund payment reply`);
+                return;
+            } else if (isAraAllStarsReq(request.cmd)) {
+                console.log(`[DEBUG] Handling ara all stars request: ${request.cmd}`);
+                const reply = await araAllStarsRep(request);
+                await sock.send([clientIdentity, JSON.stringify(reply)]);
+                console.log(`[DEBUG] Sent ara all stars reply`);
+                return;
+            } else {
+                console.log(`[DEBUG] Unsupported command: ${request.cmd}`);
+                const reply: ReplyError = {
+                    error: `unsupported command`,
+                    msgId: msgId,
+                    time: Date.now(),
+                }
+                await sock.send([clientIdentity, JSON.stringify(reply)]);
+                console.log(`[DEBUG] Sent unsupported command error reply`);
+                return;
             }
-            await sock.send(JSON.stringify(reply));
-            console.log(`[DEBUG] Sent unsupported command error reply`);
-            continue;
-        }
+        })().catch((error) => {
+            console.error(`[DEBUG] Error processing request:`, error);
+            // Try to send error reply if we have the identity
+            const errorReply: ReplyError = {
+                error: error instanceof Error ? error.message : String(error),
+                msgId: 0, // Unknown msgId
+                time: Date.now(),
+            };
+            sock.send([clientIdentity, JSON.stringify(errorReply)]).catch((sendError) => {
+                console.error(`[DEBUG] Failed to send error reply:`, sendError);
+            });
+        });
     }
 }
 

@@ -110,14 +110,17 @@ export type SolarForgeResult = {
 
 export type RequestProjectCreation = {
     cmd: "createProject",
+    msgId?: number,
     params: OpensourceUsers
 }
 export type RequestHello = {
     cmd: "hello",
+    msgId?: number,
     params?: {}
 }
 export type RequestDepositInitiation = {
     cmd: "initiateDeposit",
+    msgId?: number,
     params: InitialDepositParams & {
         specID: number,
         projectID: number,
@@ -128,6 +131,7 @@ export type RequestHyperpay = Omit<RequestDepositInitiation, "cmd"> & {
 }
 export type RequestSetWithdrawer = {
     cmd: "setWithdrawer",
+    msgId?: number,
     params: {
         specID: number,
         projectID: number,
@@ -136,6 +140,7 @@ export type RequestSetWithdrawer = {
 }
 export type RequestWithdrawerInfo = {
     cmd: "withdrawerInfo",
+    msgId?: number,
     params: {
         specID: number,
         projectID: number,
@@ -143,6 +148,7 @@ export type RequestWithdrawerInfo = {
 }
 export type RequestWithdraw = {
     cmd: "withdraw",
+    msgId?: number,
     params: {
         specID: number,
         projectID: number,
@@ -152,6 +158,7 @@ export type RequestWithdraw = {
 }
 export type RequestSetCascadeWithdrawer = {
     cmd: "setCascadeWithdrawer",
+    msgId?: number,
     params: {
         purl: string,
         withdrawer: string,
@@ -162,6 +169,7 @@ export type RequestSetCascadeWithdrawer = {
 
 export type RequestCascadeInfo = {
     cmd: "cascadeInfo",
+    msgId?: number,
     params: {
         purl: string
     }
@@ -169,6 +177,7 @@ export type RequestCascadeInfo = {
 
 export type RequestCascadeWithdraw = {
     cmd: "cascadeWithdraw",
+    msgId?: number,
     params: {
         purl: string
     }
@@ -176,11 +185,13 @@ export type RequestCascadeWithdraw = {
 
 export type RequestAddGalaxy = {
     cmd: "addGalaxy",
+    msgId?: number,
     params: SerializedGalaxy
 }
 
 export type RequestGetGalaxy = {
     cmd: "getGalaxy",
+    msgId?: number,
     params: {
         galaxyId: string
     }
@@ -188,6 +199,7 @@ export type RequestGetGalaxy = {
 
 export type RequestSolarForge = {
     cmd: "solarForge",
+    msgId?: number,
     params: {
         galaxyId: string,
         models: SerializedSolarForge[]
@@ -196,17 +208,25 @@ export type RequestSolarForge = {
 
 export type RequestSpaceCoord = {
     cmd: "spaceCoord",
+    msgId?: number,
     params: {
         galaxyId: string,
         position: SerializedPosition
     }
 }
 
+export type RequestHeartbeat = {
+    cmd: "heartbeat",
+    msgId?: number
+}
+
 export type ReplyError = {
     error: string,
+    msgId: number,
     time: number,
 }
 export type ReplyOk = {
+    msgId: number,
     time: number
 }
 export type ReplyWithdrawerInfo = ReplyOk & {
@@ -216,6 +236,7 @@ export type ReplyCascadeInfo = ReplyOk & {
     params: Omit<WithdrawerInfo, "resourceToken">
 }
 export type ReplyGalaxyCreation = {
+    msgId: number,
     time: number,
     params: GalaxyResult
 }
@@ -223,6 +244,7 @@ export type ReplyGalaxyInfo = ReplyOk & {
     params: GalaxyInfo
 }
 export type ReplySolarForge = {
+    msgId: number,
     time: number,
     params: SolarForgeResult
 }
@@ -232,12 +254,18 @@ export type ReplyTx = ReplyOk & {
     }
 }
 export type ReplyProjectCreation = {
+    msgId: number,
     time: number,
     params: CreateProject
 }
 export type ReplyDepositInitiation = ReplyOk & {
     params: InitialDeposit
 };
+export type ReplyHeartbeat = {
+    cmd: "heartbeat",
+    msgId: number,
+    time: number
+}
 export type Reply =
     ReplyOk |
     ReplyError |
@@ -248,7 +276,8 @@ export type Reply =
     ReplyCascadeInfo |
     ReplyGalaxyCreation |
     ReplyGalaxyInfo |
-    ReplySolarForge;
+    ReplySolarForge |
+    ReplyHeartbeat;
 export type Request =
     RequestHello |
     RequestProjectCreation |
@@ -263,4 +292,5 @@ export type Request =
     RequestAddGalaxy |
     RequestGetGalaxy |
     RequestSolarForge |
-    RequestSpaceCoord;
+    RequestSpaceCoord |
+    RequestHeartbeat;

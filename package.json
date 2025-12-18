@@ -1,6 +1,6 @@
 {
   "name": "@ara-web/crypto-sockets",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Crypto sockets client and server for blockchain gateway communication",
   "main": "dist/index.js",
   "module": "dist/index.js",

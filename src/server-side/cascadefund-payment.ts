@@ -27,6 +27,7 @@ export async function cascadeFundRep(request: Request): Promise<ReplyOk | ReplyE
             const createdProject = await createOpensourceProject(request.params);
             console.log(`[DEBUG] createOpensourceProject completed, result:`, createdProject);
             const reply: ReplyProjectCreation = {
+                msgId: request.msgId ?? 0,
                 time: Date.now(),
                 params: createdProject
             }
@@ -36,6 +37,7 @@ export async function cascadeFundRep(request: Request): Promise<ReplyOk | ReplyE
             console.error(`[DEBUG] Error in createProject:`, error);
             const reply: ReplyError = {
                 error: error.message || String(error),
+                msgId: request.msgId ?? 0,
                 time: Date.now(),
             }
             return reply;
@@ -50,6 +52,7 @@ export async function cascadeFundRep(request: Request): Promise<ReplyOk | ReplyE
             const calculatedAddress = await calculateAddress(request.params.specID, request.params.projectID, encodedPayload);
             console.log(`[DEBUG] Calculated address: ${calculatedAddress}`);
             const reply: ReplyDepositInitiation = {
+                msgId: request.msgId ?? 0,
                 time: Date.now(),
                 params: {
                     depositAddress: calculatedAddress,
@@ -76,6 +79,7 @@ export async function cascadeFundRep(request: Request): Promise<ReplyOk | ReplyE
             const tx = await hyperpay(request.params.specID, request.params.projectID, encodedPayload);
             console.log(`[DEBUG] hyperpay completed, tx hash: ${tx}`);
             const reply: ReplyTx = {
+                msgId: request.msgId,
                 time: Date.now(),
                 params: {
                     tx: tx,
@@ -98,6 +102,7 @@ export async function cascadeFundRep(request: Request): Promise<ReplyOk | ReplyE
             const tx = await setWithdrawer(request.params.specID, request.params.projectID, request.params.withdrawer);
             console.log(`[DEBUG] setWithdrawer completed, tx hash: ${tx}`);
             const reply: ReplyTx = {
+                msgId: request.msgId,
                 time: Date.now(),
                 params: {
                     tx: tx,
@@ -120,6 +125,7 @@ export async function cascadeFundRep(request: Request): Promise<ReplyOk | ReplyE
             const info = await getWithdrawInfo(request.params.specID, request.params.projectID);
             console.log(`[DEBUG] getWithdrawInfo completed, info:`, info);
             const reply: ReplyWithdrawerInfo = {
+                msgId: request.msgId ?? 0,
                 time: Date.now(),
                 params: info
             }
@@ -168,6 +174,7 @@ export async function cascadeFundRep(request: Request): Promise<ReplyOk | ReplyE
             const cascadeInfo = await getCascadeWithdrawer(request.params.purl);
             console.log(`[DEBUG] getCascadeWithdrawer completed, info:`, cascadeInfo);
             const reply: ReplyCascadeInfo = {
+                msgId: request.msgId,
                 time: Date.now(),
                 params: cascadeInfo
             }
@@ -229,6 +236,7 @@ export async function cascadeFundRep(request: Request): Promise<ReplyOk | ReplyE
         console.log(`[DEBUG] Unsupported command in cascadeFundRep: ${request.cmd}`);
         const reply: ReplyError = {
             error: `unsupported command`,
+            msgId: request.msgId ?? 0,
             time: Date.now(),
         }
         return reply;
